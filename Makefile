@@ -4,7 +4,7 @@ HDRS = \
 	   /include
 
 SRCS = \
-	   tets_sf.cpp
+	   main.cpp
 
 .PHONY: all check build rebuild clean start
 
@@ -15,8 +15,8 @@ build: $(TARGET)
 rebuild: clean build
 
 $(TARGET): $(SRCS)
-	g++ -c tets_sf.cpp
-	g++ tets_sf.o -o $(TARGET) -lsfml-graphics -lsfml-window -lsfml-system
+	g++ -c main.cpp
+	g++ main.o -o $(TARGET) -lsfml-graphics -lsfml-window -lsfml-system
 
 start: ./$(TARGET)
 

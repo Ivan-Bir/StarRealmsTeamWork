@@ -1,0 +1,133 @@
+#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <string>
+#include <fstream>
+#include <vector>
+#include <sstream>
+
+#define PATH_FILE "DataBase.txt"
+using namespace std;
+using namespace sf;
+
+
+enum GameTargets{
+    MARKET_DECK = 1,
+    MARKET,
+    DOP_MARKET,
+    PLAYER_HAND,
+    PLAYER_DECK,
+    PLAYER_DECK_DISCARD,
+    UTIL,
+    AVANPOST,
+    OPPONENT,
+};
+enum MarketSlots {
+    MARKET_SLOT_1 = 1,
+    MARKET_SLOT_2,
+    MARKET_SLOT_3,
+    MARKET_SLOT_4,
+    MARKET_SLOT_5
+};
+enum GameRaces {
+    NonRace = 1,
+    GreenRace,
+    RedRace,
+    YellowRace,
+    BlueRace,
+};
+class Card
+{
+    int idCard;
+    string nameCard;
+    int costCard;
+    int RaceCard;
+    int CoinCard;
+    int DamageCard;
+    int RestoreHPCard;
+    int TextRule;
+    int UtilRule;
+
+    int TargetCard;
+    double PositionCard_X;
+    double PositionCard_Y;
+public:
+    Card(int id, int target = MARKET_DECK) { // 122 Cargo_Pod 3 g 3 0 0 0 <0 3 0 0> -0 3 0 0-
+        ifstream data_file(PATH_FILE);
+        string data_line;
+        int given_id;
+        while (!data_file.eof()) {
+            data_file >> given_id;
+            getline(data_file, data_line);
+
+            if (id == given_id) {
+                stringstream line;
+                line << data_line;
+
+                idCard = id;
+                line >> nameCard;
+                line >> costCard; 
+                line >> CoinCard;
+                line >> DamageCard;
+                line >> RestoreHPCard;
+                RaceCard = id % 100 / 10;
+                TextRule = 0;
+                UtilRule = 0;
+
+                TargetCard = target;
+                PositionCard_X = 99.;
+                PositionCard_Y = 99.;
+                return;
+            }
+        }
+        cout << "Not Found this Card ID" << endl;
+        idCard = 0;
+
+        data_file.close();
+    }
+
+    void GetParameters() {
+        if (idCard == 0) {
+            cout << "Card creation error!" << endl;
+            return;
+        }
+        cout << "id= " << idCard << endl;
+        cout << "name= " << nameCard << endl;
+        cout << "cost= " << costCard << endl;
+        cout << "Race= ";
+        if (RaceCard == 1)
+            cout << "Non race";
+        if (RaceCard == 2)
+            cout << "Green Race";
+        if (RaceCard == 3)
+            cout << "Red Race";
+        if (RaceCard == 4)
+            cout << "Yellow Race";
+        if (RaceCard == 5)
+            cout << "Blue Race";    
+        cout << endl;
+        cout << "Coin= " << CoinCard << endl;
+        cout << "Damage= " << DamageCard << endl;
+        cout << "RestoreHP= " << RestoreHPCard << endl;
+        cout << "Target= ";
+        switch(TargetCard) {
+            case (1): cout << "MARKET_DECK"; break;
+            case (2): cout << "MARKET"; break;
+            case (3): cout << "DOP_MARKET"; break;
+            case (4): cout << "PLAYER_HAND"; break;
+            case (5): cout << "PLAYER_DECK"; break;
+            case (6): cout << "PLAYER_DECK_DISCARD"; break;
+            case (7): cout << "UTIL"; break;
+            case (8): cout << "AVANPOST"; break;
+            case (9): cout << "OPPONENT"; break;
+            default: cout << "No Target";
+        }
+        cout << endl;
+        cout << "Are there text rules? - ";
+        if (TextRule != 0) cout << "Yes"; else cout << "NO";
+        cout << endl; 
+        cout << "Are there util rules? - ";
+        if (UtilRule != 0) cout << "Yes";else cout << "NO";
+        cout << endl;
+        cout << "PositionCard(X, Y) " << PositionCard_X << ", " << PositionCard_Y; 
+    }
+};
