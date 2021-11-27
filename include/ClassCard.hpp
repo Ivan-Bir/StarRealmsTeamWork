@@ -35,6 +35,20 @@ enum GameRaces {
     YellowRace,
     BlueRace,
 };
+typedef struct AlliedProperty {
+    int al_CoinCard;
+    int al_DamageCard;
+    int al_RestoreHPCard;
+    int al_TextRule;
+} AlliedProperty;
+
+typedef struct UtilProperty {
+    int ut_CoinCard;
+    int ut_DamageCard;
+    int ut_RestoreHPCard;
+    int ut_TextRule;
+} UtilProperty;
+
 class Card
 {
     int idCard;
@@ -46,6 +60,9 @@ class Card
     int RestoreHPCard;
     int TextRule;
     int UtilRule;
+
+    AlliedProperty AlRule;
+    UtilProperty UtRule;
 
     int TargetCard;
     double PositionCard_X;
@@ -69,9 +86,12 @@ public:
                 line >> CoinCard;
                 line >> DamageCard;
                 line >> RestoreHPCard;
-                RaceCard = id % 100 / 10;
-                TextRule = 0;
+                line >> TextRule;
+                
+
                 UtilRule = 0;
+                RaceCard = id % 100 / 10;
+                
 
                 TargetCard = target;
                 PositionCard_X = 99.;

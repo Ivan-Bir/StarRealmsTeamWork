@@ -8,9 +8,14 @@ using namespace sf;
 using namespace std;
  
 int main()
-{
-	Card a(123);
-	a.GetParameters();
+{	
+	for (int i = 110; i < 156; i++) {
+		Card a(i);
+		a.GetParameters();
+		cout << endl;
+		cout << "------------------------------------------";
+		cout << endl;
+	};
 	// // Объект, который, собственно, является главным окном приложения
 	// RenderWindow window(VideoMode(1600, 900), "Star Realms");
 	// CircleShape shape(200.f);
