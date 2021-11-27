@@ -4,7 +4,8 @@ HDRS = \
 	   /include
 
 SRCS = \
-	   main.cpp
+	   main.cpp \
+	   ClassCard.cpp
 
 .PHONY: all check build rebuild clean start
 
@@ -15,7 +16,7 @@ build: $(TARGET)
 rebuild: clean build
 
 $(TARGET): $(SRCS)
-	g++ -c main.cpp
+	g++ -c main.cpp ClassCard.cpp
 	g++ main.o -o $(TARGET) -lsfml-graphics -lsfml-window -lsfml-system
 
 start: ./$(TARGET)
