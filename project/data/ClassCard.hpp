@@ -59,16 +59,17 @@ class Card
     int DamageCard;
     int RestoreHPCard;
     int TextRule;
-    int UtilRule;
+    int HaveAlliesRule;
+    int HaveUtilRule;
 
-    AlliedProperty AlRule;
-    UtilProperty UtRule;
+    AlliedProperty AlRule = {0, 0, 0, 0};
+    UtilProperty UtRule = {0, 0, 0, 0};
 
     int TargetCard;
     double PositionCard_X;
     double PositionCard_Y;
 public:
-    Card(int id, int target = MARKET_DECK) { // 122 Cargo_Pod 3 g 3 0 0 0 <0 3 0 0> -0 3 0 0-
+    Card(int id, int target = MARKET_DECK) {  // 122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
         ifstream data_file(PATH_FILE);
         string data_line;
         int given_id;
@@ -87,15 +88,38 @@ public:
                 line >> DamageCard;
                 line >> RestoreHPCard;
                 line >> TextRule;
-                
 
-                UtilRule = 0;
+                HaveUtilRule = 0;
                 RaceCard = id % 100 / 10;
                 
 
                 TargetCard = target;
                 PositionCard_X = 99.;
                 PositionCard_Y = 99.;
+                char marker;
+                line >> marker;
+                if (marker == '+') {
+                    cout << "+++" << endl;
+                    line >> AlRule.al_CoinCard;
+                    line >> AlRule.al_DamageCard;
+                    line >> AlRule.al_RestoreHPCard;
+                    line >> AlRule.al_TextRule;
+
+                    line >> marker;
+                    if (marker == '-') {
+                        cout << "---" << endl;
+                        line >> UtRule.ut_CoinCard;
+                        line >> UtRule.ut_DamageCard;
+                        line >> UtRule.ut_RestoreHPCard;
+                        line >> UtRule.ut_TextRule;
+                    }
+                }
+                if (marker == '-') {
+                    cout << "---" << endl;
+                }
+                // if (marker == '\n') {
+                //     cout << "$$$" << endl;
+                // }
                 return;
             }
         }
@@ -145,9 +169,13 @@ public:
         cout << "Are there text rules? - ";
         if (TextRule != 0) cout << "Yes"; else cout << "NO";
         cout << endl; 
+        cout << "Are there allies rules?";
+
         cout << "Are there util rules? - ";
+        
         if (UtilRule != 0) cout << "Yes";else cout << "NO";
         cout << endl;
+        
         cout << "PositionCard(X, Y) " << PositionCard_X << ", " << PositionCard_Y; 
     }
 };
