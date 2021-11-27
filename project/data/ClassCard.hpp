@@ -58,9 +58,9 @@ class Card
     int CoinCard;
     int DamageCard;
     int RestoreHPCard;
-    int TextRule;
-    int HaveAlliesRule;
-    int HaveUtilRule;
+    int TextRule = 0;
+    int HaveAlliesRule = 0;
+    int HaveUtilRule = 0;
 
     AlliedProperty AlRule = {0, 0, 0, 0};
     UtilProperty UtRule = {0, 0, 0, 0};
@@ -89,17 +89,16 @@ public:
                 line >> RestoreHPCard;
                 line >> TextRule;
 
-                HaveUtilRule = 0;
                 RaceCard = id % 100 / 10;
-                
 
                 TargetCard = target;
                 PositionCard_X = 99.;
                 PositionCard_Y = 99.;
+
                 char marker;
                 line >> marker;
                 if (marker == '+') {
-                    cout << "+++" << endl;
+                    HaveAlliesRule = 1;
                     line >> AlRule.al_CoinCard;
                     line >> AlRule.al_DamageCard;
                     line >> AlRule.al_RestoreHPCard;
@@ -107,7 +106,7 @@ public:
 
                     line >> marker;
                     if (marker == '-') {
-                        cout << "---" << endl;
+                        HaveUtilRule = 1;
                         line >> UtRule.ut_CoinCard;
                         line >> UtRule.ut_DamageCard;
                         line >> UtRule.ut_RestoreHPCard;
@@ -115,11 +114,12 @@ public:
                     }
                 }
                 if (marker == '-') {
-                    cout << "---" << endl;
-                }
-                // if (marker == '\n') {
-                //     cout << "$$$" << endl;
-                // }
+                        HaveUtilRule = 1;
+                        line >> UtRule.ut_CoinCard;
+                        line >> UtRule.ut_DamageCard;
+                        line >> UtRule.ut_RestoreHPCard;
+                        line >> UtRule.ut_TextRule;
+                    }
                 return;
             }
         }
@@ -166,14 +166,17 @@ public:
             default: cout << "No Target";
         }
         cout << endl;
+
         cout << "Are there text rules? - ";
         if (TextRule != 0) cout << "Yes"; else cout << "NO";
         cout << endl; 
-        cout << "Are there allies rules?";
+
+        cout << "Are there allies rules? - ";
+        if (HaveAlliesRule != 0) cout << "Yes. Race Property - " << RaceCard; else cout << "NO";
+        cout << endl;
 
         cout << "Are there util rules? - ";
-        
-        if (UtilRule != 0) cout << "Yes";else cout << "NO";
+        if (HaveUtilRule != 0) cout << "Yes"; else cout << "NO";
         cout << endl;
         
         cout << "PositionCard(X, Y) " << PositionCard_X << ", " << PositionCard_Y; 

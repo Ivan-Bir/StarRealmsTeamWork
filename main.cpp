@@ -1,5 +1,5 @@
 #include <SFML/Graphics.hpp>
-#include "include/ClassCard.hpp"
+#include "project/data/ClassCard.hpp"
 #include <iostream>
 #include <stdlib.h>
 #include <time.h>
