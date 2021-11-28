@@ -1,0 +1,1 @@
+/usr/bin/c++   -Wall -Wextra -Werror -lsfml-graphics -lsfml-window -lsfml-system   CMakeFiles/ChessMate.dir/project/include/main.cpp.o  -o ChessMate 
