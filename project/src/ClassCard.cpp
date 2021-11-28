@@ -1,10 +1,11 @@
 #include "../data/ClassCard.hpp"
+
 using namespace std;
 
-void Card::GetParameters() {
+int Card::GetParameters() {
         if (idCard == 0) {
             cout << "Card creation error!" << endl;
-            return;
+            return -1;
         }
         cout << "id= " << idCard << endl;
         cout << "name= " << nameCard << endl;
@@ -51,5 +52,7 @@ void Card::GetParameters() {
         if (HaveUtilRule != 0) cout << "Yes"; else cout << "NO";
         cout << endl;
         
-        cout << "PositionCard(X, Y) " << PositionCard_X << ", " << PositionCard_Y; 
+        cout << "PositionCard(X, Y) " << PositionCard_X << ", " << PositionCard_Y << endl;
+        
+        return 1;
     }

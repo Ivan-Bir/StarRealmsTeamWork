@@ -5,12 +5,12 @@
 #include <vector>
 #include <sstream>
 
-#define PATH_FILE "DataBase.txt"
+#define PATH_FILE "project/include/DataBase.txt"
 using namespace std;
 using namespace sf;
 
 
-enum GameTargets{
+enum GameTargets {
     MARKET_DECK = 1,
     MARKET,
     DOP_MARKET,
@@ -50,13 +50,13 @@ typedef struct UtilProperty {
 } UtilProperty;
 
 class Card {
-    int idCard;
+    int idCard = 0;
     string nameCard;
-    int costCard;
-    int RaceCard;
-    int CoinCard;
-    int DamageCard;
-    int RestoreHPCard;
+    int costCard = 0;
+    int RaceCard = 0;
+    int CoinCard = 0;
+    int DamageCard = 0;
+    int RestoreHPCard = 0;
     int TextRule = 0;
     int HaveAlliesRule = 0;
     int HaveUtilRule = 0;
@@ -129,5 +129,9 @@ public:
         data_file.close();
     }
 
-    void GetParameters();
+    int GetParameters();
+
+    int getId() {
+        return idCard;
+    }
 };

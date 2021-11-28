@@ -1,0 +1,18 @@
+111 Scout 0 1 0 0 0 0
+112 Explorer 0 2 0 0 0 0
+113 Viper 0 0 1 0 0
+121 Swarmer 1 0 3 0 0 + 0 2 0 0
+122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
+123 Moonwurm 7 0 8 0 0 + 0 0 0 22
+124 Predator 2 0 4 0 0 + 0 0 0 1
+131 Battle_Bot 1 0 2 0 0 + 0 2 0 0
+132 Convoy_Bot 3 0 4 0 21 + 0 2 0 0
+133 Mining_Mech 4 3 0 0 0 + 0 3 0 0
+141 Star_barge 1 2 0 0 0 + 0 2 0 21
+142 Falcon 3 0 2 0 1 - 0 0 0 3
+143 Gun_Ship 4 0 5 0 3 - 4 0 0 0
+144 Heavy_cruiser 5 0 4 0 1 + 0 0 0 1
+151 Trade_Hauler 2 3 0 0 0 + 0 0 3 0
+152 Patrol_Cutter 3 2 3 0 0 + 0 0 4 0
+153 Peacekeeper 6 0 6 6 0 + 0 0 0 1
+154 Trade_Raft 1 1 0 0 0 + 0 0 0 1 - 1 0 0 0

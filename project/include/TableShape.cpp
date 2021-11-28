@@ -1,8 +1,9 @@
 #include <SFML/Graphics.hpp>
+#include "../data/utils.hpp"
  
 using namespace sf;
  
-int main()
+int TableShapesDraw()
 {
 	RenderWindow window(VideoMode(1600, 900), "SFML Works!");
 
