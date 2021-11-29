@@ -1,3 +1,6 @@
+#ifndef PROJECT_CLASSDECK_UTILS_HPP_
+#define PROJECT_CLASSDECK_UTILS_HPP_
+
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <string>
@@ -135,3 +138,4 @@ public:
         return idCard;
     }
 };
+#endif  // PROJECT_CLASSDECK_UTILS_HPP_

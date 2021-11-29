@@ -6,7 +6,9 @@ HDRS = \
 SRCS = \
 	    main.cpp \
 		project/src/ClassCard.cpp \
+		project/src/ClassDeck.cpp \
 		project/include/TableShape.cpp
+
 
 .PHONY: all check build rebuild clean start
 
@@ -18,7 +20,7 @@ rebuild: clean build
 
 $(TARGET): $(SRCS)
 	g++ -c $(SRCS)
-	g++ main.o ClassCard.o TableShape.o -o $(TARGET) -lsfml-graphics -lsfml-window -lsfml-system
+	g++ main.o ClassCard.o ClassDeck.o TableShape.o -o $(TARGET) -lsfml-graphics -lsfml-window -lsfml-system
 
 start: ./$(TARGET)
 
