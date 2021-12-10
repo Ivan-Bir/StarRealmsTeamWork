@@ -56,3 +56,7 @@ int Card::GetParameters() {
         
         return 1;
     }
+
+sf::Texture* Card::GetTexture(){
+    return texture;
+}

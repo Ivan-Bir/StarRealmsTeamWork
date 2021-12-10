@@ -10,7 +10,7 @@ using namespace sf;
 using namespace std;
  
 int main() {
-	TableShapesDraw();
+	/*TableShapesDraw();
 	DeckCard market_deck1;
 	vector<Card> market_deck;
 	for (int i = 110; i < 156; i++) { //Создаю все карты, прописанные в Базе данных
@@ -43,5 +43,5 @@ int main() {
 	}
 	cout << endl;
 	cout << endl;
-	return 0;
+	return 0;*/
 }

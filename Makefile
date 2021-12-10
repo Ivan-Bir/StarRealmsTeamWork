@@ -7,7 +7,8 @@ SRCS = \
 	    main.cpp \
 		project/src/ClassCard.cpp \
 		project/src/ClassDeck.cpp \
-		project/include/TableShape.cpp
+		project/include/TableShape.cpp \
+		project/src/main.cpp
 
 
 .PHONY: all check build rebuild clean start

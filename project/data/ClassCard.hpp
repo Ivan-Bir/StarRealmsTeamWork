@@ -8,7 +8,8 @@
 #include <vector>
 #include <sstream>
 
-#define PATH_FILE "project/include/DataBase.txt"
+#define PATH_FILE_DATA_BASE "project/include/DataBase.txt"
+#define PATH_FILE_IMAGES "project/include/images/"
 using namespace std;
 using namespace sf;
 
@@ -70,12 +71,14 @@ class Card {
     int TargetCard;
     double PositionCard_X;
     double PositionCard_Y;
-
+    sf::Texture* texture;
 public:
     Card(int id, int target = MARKET_DECK) {  // 122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
-        ifstream data_file(PATH_FILE);
+        ifstream data_file(PATH_FILE_DATA_BASE);
         string data_line;
         int given_id;
+        std::string path_image=PATH_FILE_IMAGES+std::to_string(given_id);
+        (*texture).loadFromFile(path_image);
         while (!data_file.eof()) {
             data_file >> given_id;
             getline(data_file, data_line);
@@ -123,6 +126,8 @@ public:
                     line >> UtRule.ut_RestoreHPCard;
                     line >> UtRule.ut_TextRule;
                 }
+
+
                 return;
             }
         }
@@ -131,9 +136,11 @@ public:
 
         data_file.close();
     }
+    
+
 
     int GetParameters();
-
+    sf::Texture* GetTexture();
     int getId() {
         return idCard;
     }

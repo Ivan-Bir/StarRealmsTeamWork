@@ -22,3 +22,9 @@ size_t DeckCard::getSize() {
 Card DeckCard::operator() (size_t pos) {
     return deck_vec.at(pos);
 }
+
+void DeckCard::make_empty(){
+    for (int i=0;i<deck_vec.size();i++){
+        aval[i]=0;
+    }
+}
