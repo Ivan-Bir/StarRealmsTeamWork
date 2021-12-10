@@ -61,7 +61,7 @@ class Card
     int TextRule = 0;
     int HaveAlliesRule = 0;
     int HaveUtilRule = 0;
-
+    Sprite Shape;
     AlliedProperty AlRule = {0, 0, 0, 0};
     UtilProperty UtRule = {0, 0, 0, 0};
 
@@ -69,14 +69,15 @@ class Card
     double PositionCard_X;
     double PositionCard_Y;
 public:
-    Card(int id, int target = MARKET_DECK) {  // 122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
+    Card(int id, RectangleShape Shape ,int target = MARKET_DECK) {  // 122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
         ifstream data_file(PATH_FILE);
         string data_line;
         int given_id;
+        Sprite* sprite;
         while (!data_file.eof()) {
             data_file >> given_id;
             getline(data_file, data_line);
-
+            sprite=give_sprite
             if (id == given_id) {
                 stringstream line;
                 line << data_line;
