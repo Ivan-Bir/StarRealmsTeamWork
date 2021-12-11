@@ -188,6 +188,7 @@ int main()
     
     DeckCard player_hand(6,1);
     DeckCard battle_cards(6,1);
+    DeckCard market_deck(6,1);
     Discard d;
     sf::Texture texture1;
     sf::Texture texture2;
@@ -211,13 +212,16 @@ int main()
     }
     BattleCards[0].setTexture(&texture3);
     EnemyBattleCards[0].setTexture(&texture1);
-    MainDeck Deck(60);
+    MainDeck Deck(60,'d');
+    MainDeck MarketDeck(30,'m');
     Deck.giveHand(player_hand,d,5);
     for (int i=0;i<PlayerHand.size();i++){
         PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
     }
-    
-
+    MarketDeck.giveHand(market_deck,d,4);
+    for (int i=0;i<5;i++){
+        market[i].setTexture(market_deck.deck_vec[i].GetTexture());
+    }
 
 
     
@@ -236,8 +240,15 @@ int main()
                     int pos=check_if_clicked(PlayerHand,event,player_hand,window);
                     if (pos!=-1){
                         move_card(PlayerHand,player_hand,BattleCards,battle_cards,pos);
+                        cout<<pos<<" ";
                     }
-
+                    pos =check_if_clicked(market,event,market_deck,window);
+                    if (pos!=-1){
+                        d.get_card(market,market_deck,pos);
+                        market_deck.deck_vec[pos]=MarketDeck.pop_back();
+                        market[pos].setTexture(market_deck.deck_vec[pos].GetTexture());
+                    }
+                    
 
 
                     if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
@@ -283,7 +294,7 @@ int main()
         window.draw(outpost1);
         window.draw(outpost2);
         draw_rec_vector(BattleCards,window);
-        
+        draw_rec_vector(market,window);
 
         window.draw(additionalMarket);
 

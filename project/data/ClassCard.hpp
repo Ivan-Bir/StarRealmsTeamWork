@@ -141,7 +141,7 @@ public:
 
     
 
-
+    Card operator=(Card &card1);
     int GetParameters();
     sf::Texture* GetTexture();
     int getId() {
