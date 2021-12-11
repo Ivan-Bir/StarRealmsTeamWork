@@ -25,6 +25,6 @@ Card DeckCard::operator() (size_t pos) {
 
 void DeckCard::make_empty(){
     for (int i=0;i<deck_vec.size();i++){
-        aval[i]=0;
+        avaliable[i]=0;
     }
 }

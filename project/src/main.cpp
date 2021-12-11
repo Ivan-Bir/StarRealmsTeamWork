@@ -12,6 +12,25 @@ void draw_rec_vector(std::vector<sf::RectangleShape> &v,RenderWindow &window){
     return;
 }
 
+int move_card(std::vector<sf::RectangleShape> &shape_from,DeckCard &row_from, std::vector<sf::RectangleShape> &shape_to,DeckCard &row_to,int card_index){
+    //if returns 1-successfull,else-not sucessful
+    for (int i=0;i<shape_to.size();i++){
+        if (row_to.avaliable[i]){
+            Card card_to_move=row_from.deck_vec[card_index];
+            Card empty_card(000,0);
+            row_to.deck_vec[i]=card_to_move;
+            row_from.deck_vec[card_index]=empty_card;
+            row_to.avaliable[i]=0;
+            row_from.avaliable[i]=1;
+            shape_from[card_index].setTexture(row_from.deck_vec[card_index].GetTexture());
+            shape_to[i].setTexture(row_to.deck_vec[i].GetTexture());
+            return 1;
+        }
+    }
+    return 0;
+
+
+}
 
 
 int main()
@@ -160,26 +179,26 @@ int main()
     //g++ -I../data/* -o main main.cpp -lsfml-graphics -lsfml-window -lsfml-system  --собираем так
     //g++ -I../data/* -o main main.cpp ClassCard.cpp ClassDeck.cpp  -lsfml-graphics -lsfml-window -lsfml-system -- или вот так если нужны карты
     //ЕЩЕ РАЗ ПОДУМАТЬ НАД МЭЙКФАЙЛОМ
-    //DeckCard player_hand(3,1);
+    DeckCard player_hand(3,1);
    // DeckCard enemy_battle_card(&EnemyBattleCards,1);
    // DeckCard market_spr(&market,1);
     //Card card(111,1);
     sf::Texture texture1;
     sf::Texture texture2;
     sf::Texture texture3;
-    if (!texture1.loadFromFile("../include/images/154.jpg")){
+    if (!texture1.loadFromFile("project/include/images/154.jpg")){
        return 1;
     }
     /*for (int i=0;i<PlayerHand.size();i++){
         PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
     }*/
-    PlayerHand[0].setTexture(&texture1);
-    if (!texture2.loadFromFile("../include/images/112.jpg")){
+    PlayerHand[0].setTexture(player_hand.deck_vec[0].GetTexture());
+    if (!texture2.loadFromFile("project/include/images/112.jpg")){
        return 1;
     }
     market[0].setTexture(&texture2);
     market[0].setFillColor(Color(255,255,255));
-     if (!texture3.loadFromFile("../include/images/143.jpg")){
+     if (!texture3.loadFromFile("project/include/images/143.jpg")){
        return 1;
     }
     BattleCards[0].setTexture(&texture3);

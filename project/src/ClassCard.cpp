@@ -58,5 +58,5 @@ int Card::GetParameters() {
     }
 
 sf::Texture* Card::GetTexture(){
-    return texture;
+    return &texture;
 }
