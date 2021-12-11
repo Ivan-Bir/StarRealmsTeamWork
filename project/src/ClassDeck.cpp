@@ -1,5 +1,5 @@
 #include "../data/ClassDeck.hpp"
-// #include "../data/ClassCard.hpp"
+ //#include "../data/Class.hpp"
 #include <time.h>
 #include <vector>
 #include <iostream>
@@ -25,6 +25,8 @@ Card DeckCard::operator() (size_t pos) {
 
 void DeckCard::make_empty(){
     for (int i=0;i<deck_vec.size();i++){
-        avaliable[i]=0;
+        avaliable[i]=1;
+        Card empty_card(0,0);
+        deck_vec[i]=empty_card;
     }
 }

@@ -68,11 +68,11 @@ class Card {
     AlliedProperty AlRule = {0, 0, 0, 0};
     UtilProperty UtRule = {0, 0, 0, 0};
 
-    int TargetCard;
     double PositionCard_X;
     double PositionCard_Y;
     sf::Texture texture;
 public:
+    int TargetCard;
     Card(int id, int target = MARKET_DECK) {  // 122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
         ifstream data_file(PATH_FILE_DATA_BASE);
         string data_line;
@@ -131,11 +131,14 @@ public:
                 return;
             }
         }
-        cout << "Not Found this Card ID" << endl;
+        if (id!=0){
+            cout << "Not Found this Card ID" << endl;
+        }
         idCard = 0;
 
         data_file.close();
     }
+
     
 
 

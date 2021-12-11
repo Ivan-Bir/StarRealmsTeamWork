@@ -3,8 +3,14 @@
 #include <vector>
 #include "../data/ClassCard.hpp"
 #include "../data/ClassDeck.hpp"
+#include "../data/ClassMainDeck.hpp"
 using namespace sf;
- 
+
+
+
+
+
+
 void draw_rec_vector(std::vector<sf::RectangleShape> &v,RenderWindow &window){
     for (int i=0;i<v.size();i++){
         window.draw(v[i]);
@@ -24,6 +30,7 @@ int move_card(std::vector<sf::RectangleShape> &shape_from,DeckCard &row_from, st
             row_from.avaliable[i]=1;
             shape_from[card_index].setTexture(row_from.deck_vec[card_index].GetTexture());
             shape_to[i].setTexture(row_to.deck_vec[i].GetTexture());
+            row_to.deck_vec[i].TargetCard=5;
             return 1;
         }
     }
@@ -31,11 +38,23 @@ int move_card(std::vector<sf::RectangleShape> &shape_from,DeckCard &row_from, st
 
 
 }
+int check_if_clicked(vector <RectangleShape> &vec_shape,Event &event,DeckCard &cards,RenderWindow &window){
+    
+    for (int i=0;i<vec_shape.size();i++){
+        if ( cards.avaliable[i]==0 && vec_shape[i].getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window))) ){
+            return i;
+        }
+    }
+                
+    
+    return -1;
+}
 
 
 int main()
-{
-	RenderWindow window(VideoMode(1600, 900), "SFML Works!");
+{   sf::ContextSettings settings;
+    settings.antialiasingLevel = 8;
+	RenderWindow window(VideoMode(1600, 900), "SFML Works!",sf::Style::Default, settings);
 
 	RectangleShape heroImage(Vector2f(220.f, 308.f));
     RectangleShape heroStats(Vector2f(320.f, 160.f));
@@ -119,18 +138,9 @@ int main()
     mainDeck.setFillColor(Color(175, 180, 240));
 
 
-	ConvexShape endTurnButton;
-	endTurnButton.setPointCount(8);
-
-	endTurnButton.setPoint(0, Vector2f(1380.f, 294.f));
-	endTurnButton.setPoint(1, Vector2f(1330.f, 328.f));
-	endTurnButton.setPoint(2, Vector2f(1330.f, 428.f));
-	endTurnButton.setPoint(3, Vector2f(1380.f, 462.f));
-	endTurnButton.setPoint(4, Vector2f(1500.f, 462.f));
-    endTurnButton.setPoint(5, Vector2f(1550.f, 428.f));
-    endTurnButton.setPoint(6, Vector2f(1550.f, 328.f));
-    endTurnButton.setPoint(7, Vector2f(1500.f, 294.f));
- 
+	
+    RectangleShape endTurnButton(Vector2f(130.f, 90.f));
+    endTurnButton.move(Vector2f(1380.f, 294.f));
 	endTurnButton.setFillColor(Color(175, 180, 240));
 
     RectangleShape enemyOutpost1(Vector2f(168.f, 120.f));
@@ -175,24 +185,22 @@ int main()
 
 
 
-    //Закончили создавать шэйпы теперь создаем спрайты,нэйминг-smailcase
-    //g++ -I../data/* -o main main.cpp -lsfml-graphics -lsfml-window -lsfml-system  --собираем так
-    //g++ -I../data/* -o main main.cpp ClassCard.cpp ClassDeck.cpp  -lsfml-graphics -lsfml-window -lsfml-system -- или вот так если нужны карты
-    //ЕЩЕ РАЗ ПОДУМАТЬ НАД МЭЙКФАЙЛОМ
-    DeckCard player_hand(3,1);
-   // DeckCard enemy_battle_card(&EnemyBattleCards,1);
-   // DeckCard market_spr(&market,1);
-    //Card card(111,1);
+    
+    DeckCard player_hand(6,1);
+    DeckCard battle_cards(6,1);
+    Discard d;
     sf::Texture texture1;
     sf::Texture texture2;
     sf::Texture texture3;
     if (!texture1.loadFromFile("project/include/images/154.jpg")){
        return 1;
     }
-    /*for (int i=0;i<PlayerHand.size();i++){
+    
+    for (int i=0;i<PlayerHand.size();i++){
+        Card card(111,1);
+        player_hand.deck_vec[i]=card;
         PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
-    }*/
-    PlayerHand[0].setTexture(player_hand.deck_vec[0].GetTexture());
+    }
     if (!texture2.loadFromFile("project/include/images/112.jpg")){
        return 1;
     }
@@ -203,13 +211,16 @@ int main()
     }
     BattleCards[0].setTexture(&texture3);
     EnemyBattleCards[0].setTexture(&texture1);
-    //По какой=то прчиине  Создание DeckCard создает бесконечность шэйпов
-    //Разобраться почему!!
+    MainDeck Deck(60);
+    Deck.giveHand(player_hand,d,5);
+    for (int i=0;i<PlayerHand.size();i++){
+        PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
+    }
     
 
 
 
-
+    
 
 
 
@@ -220,6 +231,46 @@ int main()
 		{
 			if (event.type == Event::Closed)
 				window.close();
+            if (event.type == Event::MouseButtonPressed){
+                if (event.mouseButton.button == sf::Mouse::Left){
+                    int pos=check_if_clicked(PlayerHand,event,player_hand,window);
+                    if (pos!=-1){
+                        move_card(PlayerHand,player_hand,BattleCards,battle_cards,pos);
+                    }
+
+
+
+                    if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
+                        //EndTurn
+                        for (int i=0;i<PlayerHand.size();i++){
+                            if (player_hand.avaliable[i]==0){
+                                d.get_card(PlayerHand,player_hand,i);
+                            }
+                           
+                        }
+                         for (int i=0;i<BattleCards.size();i++){
+                            if (battle_cards.avaliable[i]==0){
+                                d.get_card(BattleCards,battle_cards,i);
+                            }
+                            
+                        }
+                        Deck.giveHand(player_hand,d,5);
+                        for (int i=0;i<5;i++){
+                            PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
+                        }
+
+                    }
+
+
+
+
+
+                }
+            }
+           
+
+            
+
 		}
 
 		window.clear(Color::White);
