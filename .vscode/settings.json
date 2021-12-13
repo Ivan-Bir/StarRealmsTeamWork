@@ -8,6 +8,7 @@
         "ostream": "cpp",
         "*.tcc": "cpp",
         "type_traits": "cpp",
-        "cstddef": "cpp"
+        "cstddef": "cpp",
+        "random": "cpp"
     }
 }

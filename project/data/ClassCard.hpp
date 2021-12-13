@@ -3,12 +3,13 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include <string>
 #include <fstream>
 #include <vector>
 #include <sstream>
 
-#define PATH_FILE "project/include/DataBase.txt"
+#define PATH_FILE "../include/DataBase.txt"
 using namespace std;
 using namespace sf;
 
@@ -53,6 +54,7 @@ typedef struct UtilProperty {
 } UtilProperty;
 
 class Card {
+public:
     int idCard = 0;
     string nameCard;
     int costCard = 0;
@@ -71,7 +73,12 @@ class Card {
     double PositionCard_X;
     double PositionCard_Y;
 
-public:
+
+
+    friend sf::Packet& operator <<(sf::Packet& packet, const Card& card);
+
+    friend Card& operator >>(sf::Packet& packet, Card& card);
+
     Card(int id, int target = MARKET_DECK) {  // 122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
         ifstream data_file(PATH_FILE);
         string data_line;
