@@ -9,7 +9,7 @@ int Card::GetParameters() {
         }
         cout << "id= " << idCard << endl;
         cout << "name= " << nameCard << endl;
-        cout << "cost= " << costCard << endl;
+        cout << "cost= " << CostCard << endl;
         cout << "Race= ";
         if (RaceCard == 1)
             cout << "Non race";

@@ -57,7 +57,7 @@ class Card {
 public:
     int idCard = 0;
     string nameCard;
-    int costCard = 0;
+    int CostCard = 0;
     int RaceCard = 0;
     int CoinCard = 0;
     int DamageCard = 0;
@@ -93,7 +93,7 @@ public:
 
                 idCard = id;
                 line >> nameCard;
-                line >> costCard; 
+                line >> CostCard; 
                 line >> CoinCard;
                 line >> DamageCard;
                 line >> RestoreHPCard;

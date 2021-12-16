@@ -33,8 +33,9 @@ class Actions {
     Actions() = default;
     int action_status = NOTHING;
     Card action_from_card = {111};
-    int position;  // Номер слота где была карта в руке/маркете
+    int position = -1;  // Номер слота где была карта в руке/маркете
 };
-//sf::Packet& operator <<(sf::Packet& packet, const Card& card);
+
+bool is_invalid_id_card(int number);
 
 #endif  // PROJECT_NETWORKUTILS_UTILS_HPP_
