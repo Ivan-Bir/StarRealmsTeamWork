@@ -211,7 +211,7 @@ int main()
     }
     BattleCards[0].setTexture(&texture3);
     EnemyBattleCards[0].setTexture(&texture1);
-    MainDeck Deck(60);
+    MainDeck Deck(60,'d');
     Deck.giveHand(player_hand,d,5);
     for (int i=0;i<PlayerHand.size();i++){
         PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
@@ -236,6 +236,7 @@ int main()
                     int pos=check_if_clicked(PlayerHand,event,player_hand,window);
                     if (pos!=-1){
                         move_card(PlayerHand,player_hand,BattleCards,battle_cards,pos);
+                        cout<<pos<<" ";
                     }
 
 
@@ -251,6 +252,10 @@ int main()
                          for (int i=0;i<BattleCards.size();i++){
                             if (battle_cards.avaliable[i]==0){
                                 d.get_card(BattleCards,battle_cards,i);
+                                if (d.discard.size()-1){
+                                d.discard[d.discard.size()-1].GetParameters();
+                                cout<<endl;
+                                }
                             }
                             
                         }
