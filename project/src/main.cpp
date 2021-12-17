@@ -50,9 +50,10 @@ int check_if_clicked(vector <RectangleShape> &vec_shape,Event &event,DeckCard &c
     return -1;
 }
 
-
 int main()
 {   sf::ContextSettings settings;
+    sf::Texture empty_texture;
+    empty_texture.loadFromFile("project/include/images/0.jpg");
     settings.antialiasingLevel = 8;
 	RenderWindow window(VideoMode(1600, 900), "SFML Works!",sf::Style::Default, settings);
 
@@ -183,11 +184,14 @@ int main()
     history.setFillColor(Color(175, 180, 240));
     giveUp.setFillColor(Color(175, 180, 240));
 
+    sf::Sprite ShowBIG(empty_texture);
+    ShowBIG.setScale(0.7,0.7);
+    ShowBIG.move(Vector2f(20.f, 330.f));
+    //ShowBIG.setFillColor(Color(175, 180, 240));
 
-
-    
     DeckCard player_hand(6,1);
     DeckCard battle_cards(6,1);
+    DeckCard market_cards(6,1);
     Discard d;
     sf::Texture texture1;
     sf::Texture texture2;
@@ -222,8 +226,8 @@ int main()
 
     
 
-
-
+    Image image;
+    int flag_draw=0;
 	while (window.isOpen())
 	{
 		Event event;
@@ -232,15 +236,18 @@ int main()
 			if (event.type == Event::Closed)
 				window.close();
             if (event.type == Event::MouseButtonPressed){
+                    ShowBIG.setTexture(empty_texture);
+                    IntRect sprite_rect(0,0,300,420);
+                    ShowBIG.setTextureRect(sprite_rect);
+                    flag_draw=0;
                 if (event.mouseButton.button == sf::Mouse::Left){
                     int pos=check_if_clicked(PlayerHand,event,player_hand,window);
                     if (pos!=-1){
+                        cout<<pos<<" ";
+                        cout<<player_hand.deck_vec[pos].GetParameters();
                         move_card(PlayerHand,player_hand,BattleCards,battle_cards,pos);
                         cout<<pos<<" ";
                     }
-
-
-
                     if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
                         //EndTurn
                         for (int i=0;i<PlayerHand.size();i++){
@@ -263,13 +270,27 @@ int main()
                         for (int i=0;i<5;i++){
                             PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
                         }
-
                     }
-
-
-
-
-
+                    pos=check_if_clicked(market,event,market_cards,window);
+                    
+                }
+                if (event.mouseButton.button == sf::Mouse::Middle){
+                    //Добавить  просмотр вывода карт противника
+                    int pos=check_if_clicked(PlayerHand,event,player_hand,window);
+                    if (pos!=-1){
+                        flag_draw=1;
+                        ShowBIG.setTexture(*(player_hand.deck_vec[pos].GetTexture()));
+                    }
+                    pos=check_if_clicked(BattleCards,event,battle_cards,window);
+                    if (pos!=-1){
+                        flag_draw=1;
+                        ShowBIG.setTexture(*(battle_cards.deck_vec[pos].GetTexture()));
+                    }
+                    pos=check_if_clicked(market,event,market_cards,window);
+                    if (pos!=-1){
+                        flag_draw=1;
+                        ShowBIG.setTexture(*(market_cards.deck_vec[pos].GetTexture()));
+                    }
                 }
             }
            
@@ -288,8 +309,9 @@ int main()
         window.draw(outpost1);
         window.draw(outpost2);
         draw_rec_vector(BattleCards,window);
-        
-
+        if (flag_draw){
+            window.draw(ShowBIG);
+        }
         window.draw(additionalMarket);
 
         draw_rec_vector(market,window);
