@@ -41,13 +41,18 @@ int move_card(std::vector<sf::RectangleShape> &shape_from,DeckCard &row_from, st
 int check_if_clicked(vector <RectangleShape> &vec_shape,Event &event,DeckCard &cards,RenderWindow &window){
     
     for (int i=0;i<vec_shape.size();i++){
-        if ( cards.avaliable[i]==0 && vec_shape[i].getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window))) ){
+        if ( cards.deck_vec[i].getId()!=0 && vec_shape[i].getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window))) ){
             return i;
         }
     }
                 
     
     return -1;
+}
+void connect_logic_to_graph(vector<RectangleShape>&rec,DeckCard &cards){
+    for (int i=0;i<rec.size();i++){
+        rec[i].setTexture(cards.deck_vec[i].GetTexture());
+    }
 }
 
 int main()
@@ -187,40 +192,22 @@ int main()
     sf::Sprite ShowBIG(empty_texture);
     ShowBIG.setScale(0.7,0.7);
     ShowBIG.move(Vector2f(20.f, 330.f));
-    //ShowBIG.setFillColor(Color(175, 180, 240));
+    
 
-    DeckCard player_hand(6,1);
-    DeckCard battle_cards(6,1);
-    DeckCard market_cards(6,1);
+    DeckCard player_hand(5,1);
+    DeckCard battle_cards(5,1);
+    DeckCard market_cards(5,1);
     Discard d;
-    sf::Texture texture1;
-    sf::Texture texture2;
-    sf::Texture texture3;
-    if (!texture1.loadFromFile("project/include/images/154.jpg")){
-       return 1;
-    }
+  
+  
     
-    for (int i=0;i<PlayerHand.size();i++){
-        Card card(111,1);
-        player_hand.deck_vec[i]=card;
-        PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
-    }
-    if (!texture2.loadFromFile("project/include/images/112.jpg")){
-       return 1;
-    }
-    market[0].setTexture(&texture2);
-    market[0].setFillColor(Color(255,255,255));
-     if (!texture3.loadFromFile("project/include/images/143.jpg")){
-       return 1;
-    }
-    BattleCards[0].setTexture(&texture3);
-    EnemyBattleCards[0].setTexture(&texture1);
+    
     MainDeck Deck(60,'d');
+    MainDeck MarketDeck(60,'m');
     Deck.giveHand(player_hand,d,5);
-    for (int i=0;i<PlayerHand.size();i++){
-        PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
-    }
-    
+    MarketDeck.giveHand(market_cards,d,5);
+    connect_logic_to_graph(PlayerHand,player_hand);
+    connect_logic_to_graph(market,market_cards);
 
 
 
@@ -242,11 +229,12 @@ int main()
                     flag_draw=0;
                 if (event.mouseButton.button == sf::Mouse::Left){
                     int pos=check_if_clicked(PlayerHand,event,player_hand,window);
+
                     if (pos!=-1){
                         cout<<pos<<" ";
-                        cout<<player_hand.deck_vec[pos].GetParameters();
+            
                         move_card(PlayerHand,player_hand,BattleCards,battle_cards,pos);
-                        cout<<pos<<" ";
+                    
                     }
                     if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
                         //EndTurn
@@ -271,8 +259,14 @@ int main()
                             PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
                         }
                     }
-                    pos=check_if_clicked(market,event,market_cards,window);
-                    
+                    pos=check_if_clicked(market,event,market_cards,window); //Проверяем что покупаем с маркета
+                    if (pos!=-1){
+                        d.get_card(market,market_cards,pos);
+                        market_cards.deck_vec[pos]=MarketDeck.giveCard(d);
+                        //market_cards.deck_vec[pos].GetTexture();
+                        connect_logic_to_graph(market,market_cards);
+                    }
+
                 }
                 if (event.mouseButton.button == sf::Mouse::Middle){
                     //Добавить  просмотр вывода карт противника

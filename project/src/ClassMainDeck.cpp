@@ -36,6 +36,16 @@ void MainDeck::giveHand(DeckCard &hand, Discard &d,int n){
 
     }
 }
+
+Card MainDeck::giveCard(Discard &d){
+    if (Deck.size()==0){
+        Deck.insert(Deck.end(), d.discard.begin(), d.discard.end());
+        d.clear();
+    }
+    Card card=Deck[Deck.size()-1];
+    Deck.pop_back();
+    return card;
+}
 Card MainDeck::del_back(){
     Card card(111,0);
     card=Deck[Deck.size()-1];

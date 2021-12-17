@@ -68,7 +68,7 @@ public:
     void giveHand(DeckCard &hand,Discard &d,int n);
     void pop_back();
     Card del_back();
-    
+    Card giveCard(Discard &d);
 };
 
 
