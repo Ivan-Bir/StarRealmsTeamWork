@@ -218,8 +218,12 @@ int main()
     sf::Texture discrad_texture;
     discrad_texture.loadFromFile("project/include/images/backplate.jpg");
     Discard_rec.setTexture(&discrad_texture);
-    //Font font();
-   // Text text("Здоровье персонажа"+to_string(hp),Font);
+    Font font;
+    font.loadFromFile("project/include/Fonts/NesobriteScLt Regular.ttf");
+    Text text("End turn",font,20);
+    text.setColor(Color::Black);
+    text.setStyle(Text::Bold);
+    text.setPosition(1410.f,320.f);
     DeckCard player_hand(5,1);
     DeckCard battle_cards(5,1);
     DeckCard market_cards(5,1);
@@ -262,6 +266,7 @@ int main()
                     }
                     if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
                         //EndTurn
+                        endTurnButton.setFillColor(Color(210, 0, 0));
                         for (int i=0;i<PlayerHand.size();i++){
                             if (player_hand.deck_vec[i].getId()!=0){
                                 d.get_card(PlayerHand,player_hand,i,discrad_texture);
@@ -315,7 +320,7 @@ int main()
             
 
 		}
-
+        
 		window.clear(Color::White);
         window.draw(BackGround);
         window.draw(heroImage);
@@ -346,6 +351,7 @@ int main()
         window.draw(history);
         window.draw(giveUp);
         window.draw(Discard_rec);
+        window.draw(text);
 		window.display();
 	}
  
