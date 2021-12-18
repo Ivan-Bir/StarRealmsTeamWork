@@ -46,18 +46,15 @@ public:
         }
         }
         else{
-        
-        for (int i=0;i<n;i++){
-            if (i%2==0){
-                Card card1(111,1);
-                Deck.push_back(card1);
+            int c=0;
+            for (int i=111;i<155;i++){
+                Card card(i);
+                if (card.getId()!=-1){
+                    Deck.push_back(card);
+                }
             }
-            else{
-                Card card2(142,1);
-                Deck.push_back(card2);
-            }   
         }
-        }
+        
     }
     
 

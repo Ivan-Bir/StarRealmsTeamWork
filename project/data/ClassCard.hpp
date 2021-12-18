@@ -87,7 +87,7 @@ public:
         ifstream data_file(PATH_FILE_DATA_BASE);
         string data_line;
         int given_id;
-        std::string path_image="project/include/images/"+to_string(id)+".jpg";
+        std::string path_image="../include/images/"+to_string(id)+".jpg";
         texture.loadFromFile(path_image);
         while (!data_file.eof()) {
             data_file >> given_id;
@@ -141,8 +141,11 @@ public:
                 return;
             }
         }
-        if (id!=0){
+        if (given_id==154 && id!=0){
             cout << "Not Found this Card ID" << endl;
+            idCard=-1;
+            return;
+            
         }
         idCard = 0;
 

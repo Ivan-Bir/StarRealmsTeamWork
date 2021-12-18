@@ -4,6 +4,7 @@
 #include "../data/ClassCard.hpp"
 #include "../data/ClassDeck.hpp"
 #include "../data/ClassMainDeck.hpp"
+#include "../data/graphicsUtils.hpp"
 using namespace sf;
 
 
@@ -11,7 +12,7 @@ using namespace sf;
 
 
 
-void draw_rec_vector(std::vector<sf::RectangleShape> &v,RenderWindow &window){
+/*void draw_rec_vector(std::vector<sf::RectangleShape> &v,RenderWindow &window){
     for (int i=0;i<v.size();i++){
         window.draw(v[i]);
     }
@@ -54,7 +55,7 @@ void connect_logic_to_graph(vector<RectangleShape>&rec,DeckCard &cards){
         rec[i].setTexture(cards.deck_vec[i].GetTexture());
     }
 }
-
+*/
 int main()
 {   sf::ContextSettings settings;
     sf::Texture empty_texture;
@@ -236,6 +237,7 @@ int main()
     MainDeck MarketDeck(60,'m');
     Deck.giveHand(player_hand,d,5,discrad_texture);
     MarketDeck.giveHand(market_cards,d,5,discrad_texture);
+    cout<<player_hand.deck_vec[4].getId();
     connect_logic_to_graph(PlayerHand,player_hand);
     connect_logic_to_graph(market,market_cards);
 
@@ -353,7 +355,9 @@ int main()
         window.draw(Discard_rec);
         window.draw(text);
 		window.display();
+        
 	}
+   
  
 	return 0;
 }

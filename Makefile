@@ -11,23 +11,21 @@ SRCS = \
 		project/src/ClassMainDeck.cpp \
 		project/src/graphicsUtils.cpp
 
-.PHONY: all check build rebuild clean
 
-all: clean check build clean_o
+
+.PHONY: all check build rebuild clean start
+
+all: clean check build start
 
 build: $(TARGET)
 
-rebuild: clean build clean_o
+rebuild: clean build
 
 $(TARGET): $(SRCS)
 	g++ -c $(SRCS)
-	g++ main.o ClassCard.o ClassDeck.o TableShape.o ClassMainDeck.o  -I $(HDRS) -o  $(TARGET) -lsfml-graphics -lsfml-window -lsfml-system
+	g++ main.o ClassCard.o ClassDeck.o TableShape.o ClassMainDeck.o graphicsUtils.o -I $(HDRS) -o  $(TARGET) -lsfml-graphics -lsfml-window -lsfml-system
 
 start: ./$(TARGET)
-	g++ main.o ClassCard.o ClassDeck.o TableShape.o -I $(HDRS) -o $(TARGET) -lsfml-graphics -lsfml-window -lsfml-system
 
 clean:
 	rm -f $(TARGET)
-
-clean_o:
-	rm -f *.o
