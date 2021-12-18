@@ -27,7 +27,7 @@ int main(int argc, char* argv[]) {
     Card card(111);
     int net_status = 0;
     sf::Packet packet;
-    DeckCard player_deck;
+    DeckCard player_deck(5,1);
 
     if (client_socket.receive(packet) != sf::Socket::Done) {  //Получен статус на начало игры
         cout << " Ne udalos" << endl;

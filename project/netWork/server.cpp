@@ -9,6 +9,7 @@
 #include <time.h>
 
 #include "../data/ClassCard.hpp"
+#include "../data/ClassMainDeck.hpp"
 #include "../data/netWorkUtils.hpp"
 
 #define SER "SERVER: "
@@ -48,14 +49,14 @@ int main(int argc, char* argv[]) {
     // for (size_t i = 0; i < 10; i ++) {
     //     deck.push_back(rand() % 100);
     // }
-
+    MainDeck market_deck(120,'m');
     cout << "Создаю карту" << endl;
     Card a(111, PLAYER_HAND);
     Card b(112, PLAYER_HAND);
     Card c(113, PLAYER_HAND);
 
-    int player_1_hp = 20;
-    int player_2_hp = 20;
+    int player_1_hp = 50;
+    int player_2_hp = 50;
 
     int total_dmg = 0;
     int less_card = 0;
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
     cout << "Записал" << endl;
     cout << "Отправляю" << endl;
 
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 8; i++) {
         if (player_1.send(packet)!= sf::Socket::Done) {
             cout << "не отправлено" << endl;
             return 1;
@@ -86,20 +87,6 @@ int main(int argc, char* argv[]) {
     packet.clear();
     packet << net_status << c;
 
-    for (int i = 0; i < 4; i++) {
-        if (player_1.send(packet)!= sf::Socket::Done) {
-            cout << "не отправлено" << endl;
-            return 1;
-        }
-        if (player_2.send(packet)!= sf::Socket::Done) {
-            cout << "не отправлено" << endl;
-            return 1;
-        }
-    }
-
-    packet.clear();
-    packet << net_status << b;
-
     for (int i = 0; i < 2; i++) {
         if (player_1.send(packet)!= sf::Socket::Done) {
             cout << "не отправлено" << endl;
@@ -112,6 +99,20 @@ int main(int argc, char* argv[]) {
     }
 
     packet.clear();
+    /*packet << net_status << b;
+
+    for (int i = 0; i < 2; i++) {
+        if (player_1.send(packet)!= sf::Socket::Done) {
+            cout << "не отправлено" << endl;
+            return 1;
+        }
+        if (player_2.send(packet)!= sf::Socket::Done) {
+            cout << "не отправлено" << endl;
+            return 1;
+        }
+    }
+
+    packet.clear();*/
     packet << YOUR_TURN;
     bool player_1_active = true;
 

@@ -9,8 +9,9 @@
 #include <vector>
 #include <sstream>
 
-#define PATH_FILE_DATA_BASE "project/include/DataBase.txt"
-#define PATH_FILE_IMAGES "project/include/images/"
+#define PATH_FILE_DATA_BASE "../include/DataBase.txt"
+#define PATH_FILE_IMAGES "../include/images/"
+#define PATH_FILE "../include/DataBase.txt"
 using namespace std;
 using namespace sf;
 
