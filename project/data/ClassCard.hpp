@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <SFML/Network.hpp>
 #include <string>
 #include <fstream>
 #include <vector>
@@ -54,9 +55,10 @@ typedef struct UtilProperty {
 } UtilProperty;
 
 class Card {
+public:
     int idCard = 0;
     string nameCard;
-    int costCard = 0;
+    int CostCard = 0;
     int RaceCard = 0;
     int CoinCard = 0;
     int DamageCard = 0;
@@ -73,6 +75,13 @@ class Card {
 public:
     sf::Texture texture;
     int TargetCard;
+
+
+
+    friend sf::Packet& operator <<(sf::Packet& packet, const Card& card);
+
+    friend Card& operator >>(sf::Packet& packet, Card& card);
+
     Card(int id, int target = MARKET_DECK) {  // 122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
         ifstream data_file(PATH_FILE_DATA_BASE);
         string data_line;
@@ -89,7 +98,7 @@ public:
 
                 idCard = id;
                 line >> nameCard;
-                line >> costCard; 
+                line >> CostCard; 
                 line >> CoinCard;
                 line >> DamageCard;
                 line >> RestoreHPCard;
