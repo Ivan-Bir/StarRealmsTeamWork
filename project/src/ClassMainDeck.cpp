@@ -53,8 +53,9 @@ Card MainDeck::del_back(){
     return card;
 
 }
-void Discard::get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int card_index){
+void Discard::get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int card_index,RectangleShape &Discard_rec){
     discard.push_back(row.deck_vec[card_index]);
+    Discard_rec.setTexture(row.deck_vec[card_index].GetTexture());
     row.avaliable[card_index]=1;
     Card empty_card(0,0);
     shape[card_index].setTexture(empty_card.GetTexture());

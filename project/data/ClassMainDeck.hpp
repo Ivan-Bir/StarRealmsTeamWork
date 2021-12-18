@@ -16,7 +16,7 @@ public:
     vector <Card> discard;
     
 
-    void get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int card_index);
+    void get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int card_index,RectangleShape &Discard_rec);
     void clear();
         
 

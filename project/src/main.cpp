@@ -218,7 +218,7 @@ int main()
   
     
     
-    MainDeck Deck(60,'d');
+    MainDeck Deck(30,'d');
     MainDeck MarketDeck(60,'m');
     Deck.giveHand(player_hand,d,5);
     MarketDeck.giveHand(market_cards,d,5);
@@ -255,29 +255,23 @@ int main()
                     if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
                         //EndTurn
                         for (int i=0;i<PlayerHand.size();i++){
-                            if (player_hand.avaliable[i]==0){
-                                d.get_card(PlayerHand,player_hand,i);
+                            if (player_hand.deck_vec[i].getId()!=0){
+                                d.get_card(PlayerHand,player_hand,i,Discard_rec);
                             }
                            
                         }
                          for (int i=0;i<BattleCards.size();i++){
-                            if (battle_cards.avaliable[i]==0){
-                                d.get_card(BattleCards,battle_cards,i);
-                                if (d.discard.size()-1){
-                                d.discard[d.discard.size()-1].GetParameters();
-                                cout<<endl;
-                                }
+                            if (battle_cards.deck_vec[i].getId()!=0){
+                                d.get_card(BattleCards,battle_cards,i,Discard_rec);
                             }
                             
                         }
                         Deck.giveHand(player_hand,d,5);
-                        for (int i=0;i<5;i++){
-                            PlayerHand[i].setTexture(player_hand.deck_vec[i].GetTexture());
-                        }
+                        connect_logic_to_graph(PlayerHand,player_hand);
                     }
                     pos=check_if_clicked(market,event,market_cards,window); //Проверяем что покупаем с маркета
                     if (pos!=-1){
-                        d.get_card(market,market_cards,pos);
+                        d.get_card(market,market_cards,pos,Discard_rec);
                         market_cards.deck_vec[pos]=MarketDeck.giveCard(d);
                         //market_cards.deck_vec[pos].GetTexture();
                         connect_logic_to_graph(market,market_cards);
