@@ -16,7 +16,7 @@ public:
     vector <Card> discard;
     
 
-    void get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int card_index,RectangleShape &Discard_rec);
+    void get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int card_index,Texture &discard_texture);
     void clear();
         
 
@@ -65,7 +65,7 @@ public:
     void append(Card one_card);
     Card operator() (size_t pos);
     size_t getSize();
-    void giveHand(DeckCard &hand,Discard &d,int n);
+    void giveHand(DeckCard &hand,Discard &d,int n,Texture &disc_text);
     void pop_back();
     Card del_back();
     Card giveCard(Discard &d);

@@ -70,8 +70,8 @@ class Card {
 
     double PositionCard_X;
     double PositionCard_Y;
-    sf::Texture texture;
 public:
+    sf::Texture texture;
     int TargetCard;
     Card(int id, int target = MARKET_DECK) {  // 122 Cargo_Pod 3 3 0 0 0 + 0 3 0 0 - 0 3 0 0
         ifstream data_file(PATH_FILE_DATA_BASE);

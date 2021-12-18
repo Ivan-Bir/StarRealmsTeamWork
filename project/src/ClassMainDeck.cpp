@@ -22,7 +22,7 @@ Card MainDeck::operator() (size_t pos) {
     return Deck.at(pos);
 }
 
-void MainDeck::giveHand(DeckCard &hand, Discard &d,int n){
+void MainDeck::giveHand(DeckCard &hand, Discard &d,int n,Texture &disc_text){
     for (int i=0;i<n;i++){
         hand.deck_vec[i]=Deck[Deck.size()-1];
         hand.avaliable[i]=0;
@@ -30,6 +30,7 @@ void MainDeck::giveHand(DeckCard &hand, Discard &d,int n){
         Deck.pop_back();
         if (Deck.size()==0){
             Deck.insert(Deck.end(), d.discard.begin(), d.discard.end());
+            disc_text.loadFromFile("project/include/images/backplate.jpg");
             d.clear();
         }
         
@@ -53,9 +54,9 @@ Card MainDeck::del_back(){
     return card;
 
 }
-void Discard::get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int card_index,RectangleShape &Discard_rec){
+void Discard::get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int card_index,Texture &discard_texture){
     discard.push_back(row.deck_vec[card_index]);
-    Discard_rec.setTexture(row.deck_vec[card_index].GetTexture());
+    discard_texture=row.deck_vec[card_index].texture;
     row.avaliable[card_index]=1;
     Card empty_card(0,0);
     shape[card_index].setTexture(empty_card.GetTexture());

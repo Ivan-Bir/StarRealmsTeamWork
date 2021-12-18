@@ -206,7 +206,18 @@ int main()
     IntRect backgr_rect(0,0,100000,10000);
     sf::Sprite BackGround(background);
     BackGround.setTextureRect(backgr_rect);
-   
+    sf::Texture hero_image;
+    hero_image.loadFromFile("project/include/images/Hero1.jpg");
+    heroImage.setTexture(&hero_image);
+    sf::Texture enemy_image;
+    enemy_image.loadFromFile("project/include/images/Hero2.jpg");
+    enemyImage.setTexture(&enemy_image);
+    sf::Texture backplate;
+    backplate.loadFromFile("project/include/images/backplate.jpg");
+    mainDeck.setTexture(&backplate);
+    sf::Texture discrad_texture;
+    discrad_texture.loadFromFile("project/include/images/backplate.jpg");
+    Discard_rec.setTexture(&discrad_texture);
     //Font font();
    // Text text("Здоровье персонажа"+to_string(hp),Font);
     DeckCard player_hand(5,1);
@@ -214,22 +225,20 @@ int main()
     DeckCard market_cards(5,1);
     DeckCard enemy_battle_cards(5,1);
     Discard d;
-  
-  
+   
     
     
     MainDeck Deck(30,'d');
     MainDeck MarketDeck(60,'m');
-    Deck.giveHand(player_hand,d,5);
-    MarketDeck.giveHand(market_cards,d,5);
+    Deck.giveHand(player_hand,d,5,discrad_texture);
+    MarketDeck.giveHand(market_cards,d,5,discrad_texture);
     connect_logic_to_graph(PlayerHand,player_hand);
     connect_logic_to_graph(market,market_cards);
 
 
 
     
-
-    Image image;
+    
     int flag_draw=0;
 	while (window.isOpen())
 	{
@@ -247,7 +256,6 @@ int main()
                     int pos=check_if_clicked(PlayerHand,event,player_hand,window);
 
                     if (pos!=-1){
-                        cout<<pos<<" ";
             
                         move_card(PlayerHand,player_hand,BattleCards,battle_cards,pos);
                     
@@ -256,24 +264,24 @@ int main()
                         //EndTurn
                         for (int i=0;i<PlayerHand.size();i++){
                             if (player_hand.deck_vec[i].getId()!=0){
-                                d.get_card(PlayerHand,player_hand,i,Discard_rec);
+                                d.get_card(PlayerHand,player_hand,i,discrad_texture);
+                                //cout<<discrad_texture.getNativeHandle()<<" ";
                             }
                            
                         }
                          for (int i=0;i<BattleCards.size();i++){
                             if (battle_cards.deck_vec[i].getId()!=0){
-                                d.get_card(BattleCards,battle_cards,i,Discard_rec);
+                                d.get_card(BattleCards,battle_cards,i,discrad_texture);
                             }
                             
                         }
-                        Deck.giveHand(player_hand,d,5);
+                        Deck.giveHand(player_hand,d,5,discrad_texture);
                         connect_logic_to_graph(PlayerHand,player_hand);
                     }
                     pos=check_if_clicked(market,event,market_cards,window); //Проверяем что покупаем с маркета
                     if (pos!=-1){
-                        d.get_card(market,market_cards,pos,Discard_rec);
+                        d.get_card(market,market_cards,pos,discrad_texture);
                         market_cards.deck_vec[pos]=MarketDeck.giveCard(d);
-                        //market_cards.deck_vec[pos].GetTexture();
                         connect_logic_to_graph(market,market_cards);
                     }
 
