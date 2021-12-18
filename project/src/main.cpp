@@ -125,7 +125,6 @@ int main()
     }
 
     RectangleShape mainDeck(Vector2f(160.f, 120.f));
-
     additionalMarket.move(265, 294);
     
     market[0].move(400, 294);
@@ -148,7 +147,9 @@ int main()
     RectangleShape endTurnButton(Vector2f(130.f, 90.f));
     endTurnButton.move(Vector2f(1380.f, 294.f));
 	endTurnButton.setFillColor(Color(175, 180, 240));
-
+    RectangleShape Discard_rec(Vector2f(150.f, 210.f));
+    Discard_rec.move(1380.f, 400.f);
+    Discard_rec.setFillColor(Color(175, 180, 240));
     RectangleShape enemyOutpost1(Vector2f(168.f, 120.f));
     RectangleShape enemyOutpost2(Vector2f(168.f, 120.f));
 
@@ -189,14 +190,29 @@ int main()
     history.setFillColor(Color(175, 180, 240));
     giveUp.setFillColor(Color(175, 180, 240));
 
+
+
+
+
+    ///////ЧИТАТЬ КОД СЛЕДУЕТ НАЧИНАЯ С ЭТОЙ СТРОКИ(ну и почитайте функции пожожда)
+    int hp=0;
+    int damage=0;
+    int coin=0;
     sf::Sprite ShowBIG(empty_texture);
     ShowBIG.setScale(0.7,0.7);
     ShowBIG.move(Vector2f(20.f, 330.f));
-    
-
+    sf::Texture background;
+    background.loadFromFile("project/include/images/background.jpg");
+    IntRect backgr_rect(0,0,100000,10000);
+    sf::Sprite BackGround(background);
+    BackGround.setTextureRect(backgr_rect);
+   
+    //Font font();
+   // Text text("Здоровье персонажа"+to_string(hp),Font);
     DeckCard player_hand(5,1);
     DeckCard battle_cards(5,1);
     DeckCard market_cards(5,1);
+    DeckCard enemy_battle_cards(5,1);
     Discard d;
   
   
@@ -285,6 +301,11 @@ int main()
                         flag_draw=1;
                         ShowBIG.setTexture(*(market_cards.deck_vec[pos].GetTexture()));
                     }
+                    pos=check_if_clicked(EnemyBattleCards,event,enemy_battle_cards,window);
+                    if (pos!=-1){
+                        flag_draw=1;
+                        ShowBIG.setTexture(*(enemy_battle_cards.deck_vec[pos].GetTexture()));
+                    }
                 }
             }
            
@@ -294,6 +315,7 @@ int main()
 		}
 
 		window.clear(Color::White);
+        window.draw(BackGround);
         window.draw(heroImage);
         window.draw(heroStats);
         draw_rec_vector(PlayerHand,window);
@@ -321,7 +343,7 @@ int main()
         window.draw(enemyDeck);
         window.draw(history);
         window.draw(giveUp);
-
+        window.draw(Discard_rec);
 		window.display();
 	}
  
