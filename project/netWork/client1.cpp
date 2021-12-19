@@ -156,6 +156,18 @@ int main(int argc, char* argv[]) {
                 /*
                 Используйте полученные данные, чтобы отобразить действие оппонента
                 */
+                if (action_status == BUY_CARD) { // Если карту купили, то нужно принять от сервера какую нужно выложить в свободный слот маркета
+                    if (client_socket.receive(packet) != sf::Socket::Done) {
+                        cout << " Ne udalos1" << endl;
+                        return 1;
+                    }
+                    packet >> action_status >> buff_card;
+                    if (action_status == GET_CARD) {
+                        /*
+                        Добавьте карту в свободный слот маркета по-братски
+                        */
+                    }
+                }
                cout << action_status << " -- " << buff_card.nameCard << " -- " << pos << endl;
                net_status = WAIT;
             }
