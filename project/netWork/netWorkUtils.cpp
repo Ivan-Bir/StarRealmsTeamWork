@@ -1,14 +1,24 @@
 #include "../data/ClassCard.hpp"
 #include "../data/netWorkUtils.hpp"
 #include <SFML/Network.hpp>
+#include <SFML/Graphics.hpp>
 
+// sf::Packet& operator <<(sf::Packet& packet, const sf::Texture& texture) {
+//     return packet << texture; 
+// }
+
+// sf::Packet& operator >> (sf::Packet& packet, const sf::Texture& texture) {
+//     return packet >> texture; 
+// }
 
 sf::Packet& operator <<(sf::Packet& packet, const Card& card) {
-    return packet << card.idCard << card.nameCard << card.CostCard << card.RaceCard << card.CoinCard
+    packet << card.idCard << card.nameCard << card.CostCard << card.RaceCard << card.CoinCard
                 << card.DamageCard << card.RestoreHPCard << card.TextRule << card.HaveAlliesRule << card.HaveUtilRule
                 << card.AlRule.al_CoinCard << card.AlRule.al_DamageCard << card.AlRule.al_RestoreHPCard << card.AlRule.al_TextRule
                 << card.UtRule.ut_CoinCard << card.UtRule.ut_DamageCard << card.UtRule.ut_RestoreHPCard << card.UtRule.ut_TextRule
-                << card.TargetCard << card.PositionCard_X << card.PositionCard_Y;
+                << card.TargetCard << card.PositionCard_X << card.PositionCard_Y << card.path_file_img;
+                //packet << card.texture;
+    return packet;
 }
 
 Card& operator >>(sf::Packet& packet, Card& card) {
@@ -16,7 +26,7 @@ Card& operator >>(sf::Packet& packet, Card& card) {
             >> card.DamageCard >> card.RestoreHPCard >> card.TextRule >> card.HaveAlliesRule >> card.HaveUtilRule
             >> card.AlRule.al_CoinCard >> card.AlRule.al_DamageCard >> card.AlRule.al_RestoreHPCard >> card.AlRule.al_TextRule
             >> card.UtRule.ut_CoinCard >> card.UtRule.ut_DamageCard >> card.UtRule.ut_RestoreHPCard >> card.UtRule.ut_TextRule
-            >> card.TargetCard >> card.PositionCard_X >> card.PositionCard_Y;
+            >> card.TargetCard >> card.PositionCard_X >> card.PositionCard_Y >> card.path_file_img; //>> card.texture;
     return card;
 }
 

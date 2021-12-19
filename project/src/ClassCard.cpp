@@ -10,6 +10,7 @@ int Card::GetParameters() {
         cout << "id= " << idCard << endl;
         cout << "name= " << nameCard << endl;
         cout << "cost= " << CostCard << endl;
+        cout << "PATH= " << path_file_img << endl;
         cout << "Race= ";
         if (RaceCard == 1)
             cout << "Non race";

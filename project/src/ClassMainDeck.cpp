@@ -25,6 +25,7 @@ Card MainDeck::operator() (size_t pos) {
 void MainDeck::giveHand(DeckCard &hand, Discard &d,int n,Texture &disc_text){
     for (int i=0;i<n;i++){
         hand.deck_vec[i]=Deck[Deck.size()-1];
+        hand.deck_vec[i].texture.loadFromFile(hand.deck_vec[i].path_file_img);
         hand.avaliable[i]=0;
         hand.deck_vec[i].TargetCard=4;
         Deck.pop_back();
@@ -48,9 +49,11 @@ Card MainDeck::giveCard(Discard &d){
     return card;
 }
 Card MainDeck::del_back(){
+    cout << "Это буффер ";
     Card card(111,0);
     card=Deck[Deck.size()-1];
     Deck.pop_back();
+    cout << card.getId() << " ,";
     return card;
 
 }

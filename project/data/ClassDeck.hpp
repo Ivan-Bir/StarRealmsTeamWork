@@ -19,12 +19,12 @@ public:
     size_t getSize();
     Card operator () (size_t pos);
     void make_empty();
-    DeckCard(int n,int target){
+    DeckCard(int n, int target){
         avaliable.resize(n);
-        for (int i=0;i<n;i++){
-            Card empty_card(000,target);
+        for (int i = 0; i < n; i++) {
+            Card empty_card(000, target);
             deck_vec.push_back(empty_card);
-            avaliable[i]=1;
+            avaliable[i] = 1;
         }
     }
 };

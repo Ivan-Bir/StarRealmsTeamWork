@@ -74,6 +74,7 @@ public:
     double PositionCard_X;
     double PositionCard_Y;
 public:
+    string path_file_img;
     sf::Texture texture;
     int TargetCard;
 
@@ -88,6 +89,7 @@ public:
         string data_line;
         int given_id;
         std::string path_image="../include/images/"+to_string(id)+".jpg";
+        cout << "In constructor CARD :" << path_image << endl;
         texture.loadFromFile(path_image);
         while (!data_file.eof()) {
             data_file >> given_id;
@@ -110,6 +112,7 @@ public:
                 TargetCard = target;
                 PositionCard_X = 99.;
                 PositionCard_Y = 99.;
+                path_file_img = path_image;
 
                 char marker;
                 line >> marker;
@@ -136,7 +139,6 @@ public:
                     line >> UtRule.ut_RestoreHPCard;
                     line >> UtRule.ut_TextRule;
                 }
-
 
                 return;
             }
