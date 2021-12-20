@@ -56,6 +56,19 @@ void connect_logic_to_graph(vector<RectangleShape>&rec,DeckCard &cards){
     }
 }
 */
+
+
+
+
+
+
+
+
+
+
+
+
+
 int main()
 {   sf::ContextSettings settings;
     sf::Texture empty_texture;

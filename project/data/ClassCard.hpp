@@ -89,7 +89,7 @@ public:
         string data_line;
         int given_id;
         std::string path_image="../include/images/"+to_string(id)+".jpg";
-        cout << "In constructor CARD :" << path_image << endl;
+        //cout << "In constructor CARD :" << path_image << endl;
         texture.loadFromFile(path_image);
         while (!data_file.eof()) {
             data_file >> given_id;

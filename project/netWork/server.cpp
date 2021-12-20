@@ -139,14 +139,22 @@ int main(int argc, char* argv[]) {
     int is_played_yellow_race;
     int is_played_blue_race;
     cout << "Жду активности от клиентов" << endl;
+    player_1.setBlocking(false);
+    player_2.setBlocking(false);
     while (true) {
         while (player_1_active) {
-            cout << "Готов обработать Action" << endl;
-            if (player_1.receive(packet) != sf::Socket::Done) {
+            //cout << "Готов обработать Action" << endl;
+            int rec=player_1.receive(packet);
+            if (rec==sf::Socket::NotReady){
+                continue;   
+            }
+            if (rec != sf::Socket::Done) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
             }
-            cout << "@Получил Action - " ;
+            
+            
+            //cout << "@Получил Action - " ;
 
             // Принимаем пакет от активного игрока
             packet >> active_status;
@@ -163,14 +171,14 @@ int main(int argc, char* argv[]) {
             turn_log.push_back(buff_act);
 
             // Инфу о действии отсылаем другому игроку на отрисовку
-            cout << "Отсылаю на отрисовку" << endl;
+            //cout << "Отсылаю на отрисовку" << endl;
             packet.clear();
             packet << OPPONENT_TURN << buff_act.action_status << buff_act.action_from_card.getId() << buff_act.position;
             if (player_2.send(packet) != sf::Socket::Done) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
             }
-            cout << "Отправлено на отрисовку" << endl;
+            //cout << "Отправлено на отрисовку" << endl;
 
             if (active_status == BUY_CARD) {
                 cout << "##Нужно выложить карту из маркета" << endl;
@@ -198,7 +206,7 @@ int main(int argc, char* argv[]) {
         }
 
         // Обработка действий за ход
-        cout << "Конец хода первого" << endl;
+        //cout << "Конец хода первого" << endl;
 
         battle_log.push_back(turn_log);
 
@@ -298,8 +306,12 @@ int main(int argc, char* argv[]) {
         }
 
         while (player_2_active) {
-            cout << "Готов обработать Action2" << endl;
-            if (player_2.receive(packet) != sf::Socket::Done) {
+            int rec=player_2.receive(packet);
+            //cout << "Готов обработать Action2" << endl;
+            if (rec == sf::Socket::NotReady) {
+                continue;
+            }
+            if (rec != sf::Socket::Done) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
             }

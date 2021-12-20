@@ -43,3 +43,46 @@ void connect_logic_to_graph(vector<RectangleShape>&rec,DeckCard &cards){
         rec[i].setTexture(cards.deck_vec[i].GetTexture());
     }
 }
+
+
+void draw(RenderWindow &window,Sprite BackGround,RectangleShape hero_image,
+RectangleShape hero_stats,vector<RectangleShape> PlayerHand,RectangleShape playerOneDeck,RectangleShape playerOneDiscard,
+vector<RectangleShape> BattleCards,Sprite ShowBIG,vector<RectangleShape> market,RectangleShape MainDeck,RectangleShape endTurnButton,
+vector<RectangleShape> EnemyBattleCards, RectangleShape enemyImage,RectangleShape enemyDeck,RectangleShape history,
+RectangleShape giveUp,RectangleShape Discard_rec,Text text,Text text_my_hp,Text text_enemy_hp,RectangleShape heroImage,
+RectangleShape heroStats,int flag_draw,RectangleShape mainDeck){
+                        window.clear(Color::White);
+                        window.draw(BackGround);
+                        window.draw(heroImage);
+                        window.draw(heroStats);
+                        draw_rec_vector(PlayerHand,window);
+                        window.draw(playerOneDeck);
+                        window.draw(playerOneDiscard);
+
+                       // window.draw(outpost1);
+                        //window.draw(outpost2);
+                        draw_rec_vector(BattleCards,window);
+                        if (flag_draw){
+                            window.draw(ShowBIG);
+                        }
+                        //window.draw(additionalMarket);
+
+                        draw_rec_vector(market,window);
+                    
+                        window.draw(mainDeck);
+
+                        window.draw(endTurnButton);
+
+                        //window.draw(enemyOutpost1);
+                        //window.draw(enemyOutpost2);
+                        draw_rec_vector(EnemyBattleCards,window);
+                        window.draw(enemyImage);
+                        window.draw(enemyDeck);
+                        window.draw(history);
+                        window.draw(giveUp);
+                        window.draw(Discard_rec);
+                        window.draw(text);
+                        window.draw(text_my_hp);
+                        window.draw(text_enemy_hp);
+                        window.display();
+}
