@@ -217,8 +217,8 @@ int main(int argc, char* argv[]) {
     //MainDeck MarketDeck(6,'m');
     //Deck.giveHand(player_hand,d,5,discrad_texture);
     //MarketDeck.giveHand(market_cards,d,5,discrad_texture);
-    connect_logic_to_graph(PlayerHand,player_hand);
-    connect_logic_to_graph(market,market_cards);
+    //connect_logic_to_graph(PlayerHand,player_hand);
+    //connect_logic_to_graph(market,market_cards);
 
     int flag_draw = 0;
 	while (window.isOpen()){
@@ -231,6 +231,7 @@ int main(int argc, char* argv[]) {
             int net_status = 0;
             sf::Packet packet;
             int pos = 0;
+            int buff_card_id=0;
             //DeckCard player_deck(5,1);
 
             // if (client_socket.receive(packet) != sf::Socket::Done) {  //Получен статус на начало игры
@@ -240,8 +241,9 @@ int main(int argc, char* argv[]) {
             
             for (int i = 0; i < 5; i++){ // Получаем 5 карт в маркет
                 client_socket.receive(packet);
-                packet >> net_status >> buff_card;
+                packet >> net_status >> buff_card_id;
                 //buff_card.texture.loadFromFile(buff_card.path_file_img);
+                buff_card=return_card(buff_card_id);
                 packet >> pos;
                 market_cards.deck_vec[i] = buff_card;
                 market_cards.deck_vec[i].texture.loadFromFile(buff_card.path_file_img);
@@ -251,9 +253,9 @@ int main(int argc, char* argv[]) {
             //_____________________________________________ Идет отрисовка полученного в начале игры на маркет
             window.clear(Color::White);
             window.draw(BackGround);
+            draw_rec_vector(PlayerHand,window);
             window.draw(heroImage);
             window.draw(heroStats);
-            draw_rec_vector(PlayerHand,window);
             window.draw(playerOneDeck);
             window.draw(playerOneDiscard);
 
@@ -289,7 +291,8 @@ int main(int argc, char* argv[]) {
                 cout << " Ne udalos" << endl;
             }
             if (net_status == START_GAME) {
-                packet >> net_status >> buff_card;
+                packet >> net_status >> buff_card_id;
+                buff_card=return_card(buff_card_id);
                 buff_card.texture.loadFromFile(buff_card.path_file_img);
                 //player_deck.append(card);
                 Deck.append(buff_card);
@@ -301,7 +304,8 @@ int main(int argc, char* argv[]) {
                         cout << " Ne udalos" << endl;
                         //return 1;
                     }
-                    packet >> net_status >> buff_card;
+                    packet >> net_status >> buff_card_id;
+                    buff_card=return_card(buff_card_id);
                     buff_card.texture.loadFromFile(buff_card.path_file_img);
                     //cout << net_status << endl;
                     buff_card.TargetCard = PLAYER_DECK;
@@ -427,8 +431,8 @@ int main(int argc, char* argv[]) {
                                     
                                     action_status = PLAY_CARD;
                                     packet.clear();
-                                    buff_card = player_hand.deck_vec[pos];
-                                    packet << action_status << buff_card << pos;
+                                    buff_card_id = player_hand.deck_vec[pos].getId();
+                                    packet << action_status << buff_card_id << pos;
                                 }
 
                                 if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
@@ -460,9 +464,9 @@ int main(int argc, char* argv[]) {
                                     if (market_cards.deck_vec[pos].CostCard<=coins_per_turn){
 
                                         packet.clear();
-                                        buff_card = market_cards.deck_vec[pos];
+                                        buff_card_id = market_cards.deck_vec[pos].getId();
                                         action_status = BUY_CARD;
-                                        packet << action_status << buff_card << pos;
+                                        packet << action_status << buff_card_id << pos;
 
                                         d.get_card(market,market_cards,pos,discrad_texture);
                                         connect_logic_to_graph(market,market_cards);
@@ -529,7 +533,8 @@ int main(int argc, char* argv[]) {
                                 //return 1;
                             }
                             packet >> action_status;
-                            packet >> buff_card;
+                            packet >> buff_card_id;
+                            buff_card=return_card(buff_card_id);
                             buff_card.texture.loadFromFile(buff_card.path_file_img);
                             packet >> pos;
                             cout << " Получена карта, pos = " << pos << buff_card.GetParameters()<< endl;
@@ -606,7 +611,8 @@ int main(int argc, char* argv[]) {
                     if (net_status == OPPONENT_TURN) {
                         history.setFillColor(Color(250, 0, 0)); // RED
                         packet >> action_status;
-                        packet >> buff_card;
+                        packet >> buff_card_id;
+                        buff_card=return_card(buff_card_id);
                         buff_card.texture.loadFromFile(buff_card.path_file_img);
                         packet >> pos; // Что сделал оппонент, с какой картой и в каком слоте руки/маркета она раньше была
                         /*
@@ -625,7 +631,8 @@ int main(int argc, char* argv[]) {
                                 return 1;
                             }
                             packet >> action_status;
-                            packet >> buff_card;
+                            packet >> buff_card_id;
+                              buff_card=return_card(buff_card_id);
                             buff_card.texture.loadFromFile(buff_card.path_file_img);
                             packet >> pos;
                             if (action_status == GET_CARD) {

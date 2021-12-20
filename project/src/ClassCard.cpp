@@ -61,3 +61,7 @@ int Card::GetParameters() {
 sf::Texture* Card::GetTexture(){
     return &texture;
 }
+Card return_card(int id){
+    Card card(id);
+    return card;
+}

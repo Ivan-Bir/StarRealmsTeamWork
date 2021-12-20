@@ -50,6 +50,7 @@ int main(int argc, char* argv[]) {
     //     deck.push_back(rand() % 100);
     // }
     sf::Packet packet;
+    int buff_card_id=0;
     MainDeck market_deck('D', 2);
     //Не забыть сделать шаффл
     market_deck.shuffle_deck();
@@ -72,7 +73,7 @@ int main(int argc, char* argv[]) {
     cout << "Записываю" << endl;
     for (int i = 0 ; i < 5; i++){
         packet.clear();
-        packet << START_GAME << market_deck.del_back() << i;
+        packet << START_GAME << market_deck.del_back().getId() << i;
         if (player_1.send(packet)!= sf::Socket::Done) {
             cout << "не отправлено для маркета" << endl;
             return 1;
@@ -84,7 +85,7 @@ int main(int argc, char* argv[]) {
     }
     int net_status = START_GAME;
     packet.clear();
-    packet << net_status << a;
+    packet << net_status << 111;
     cout << "Записал" << endl;
     cout << "Отправляю" << endl;
 
@@ -99,7 +100,7 @@ int main(int argc, char* argv[]) {
         }
     }
     packet.clear();
-    packet << net_status << c;
+    packet << net_status << 113;
     for (int i = 0; i < 2; i++) {
         if (player_1.send(packet)!= sf::Socket::Done) {
             cout << "не отправлено" << endl;
@@ -156,14 +157,15 @@ int main(int argc, char* argv[]) {
                 cout << active_status << endl;
             }
             buff_act.action_status = active_status;
-            packet >> buff_act.action_from_card;
+            packet >> buff_card_id;
+            buff_act.action_from_card=return_card(buff_card_id);
             packet >> buff_act.position;
             turn_log.push_back(buff_act);
 
             // Инфу о действии отсылаем другому игроку на отрисовку
             cout << "Отсылаю на отрисовку" << endl;
             packet.clear();
-            packet << OPPONENT_TURN << buff_act.action_status << buff_act.action_from_card << buff_act.position;
+            packet << OPPONENT_TURN << buff_act.action_status << buff_act.action_from_card.getId() << buff_act.position;
             if (player_2.send(packet) != sf::Socket::Done) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
@@ -173,7 +175,7 @@ int main(int argc, char* argv[]) {
             if (active_status == BUY_CARD) {
                 cout << "##Нужно выложить карту из маркета" << endl;
                 packet.clear();
-                packet << GET_CARD << market_deck.del_back() << buff_act.position;  // Добавьте верхнюю карту из деки рынка
+                packet << GET_CARD << market_deck.del_back().getId() << buff_act.position;  // Добавьте верхнюю карту из деки рынка
                 if (player_1.send(packet) != sf::Socket::Done) {
                     cout << " Ne udalosot clienta" << endl;
                     return 1;
@@ -306,14 +308,15 @@ int main(int argc, char* argv[]) {
             // Принимаем пакет от активного игрока
             packet >> active_status;
             buff_act.action_status = active_status;
-            packet >> buff_act.action_from_card;
+            packet >>  buff_card_id;
+            buff_act.action_from_card=return_card(buff_card_id);
             packet >> buff_act.position;
             turn_log.push_back(buff_act);
 
             // Инфу о действии отсылаем другому игроку на отрисовку
             cout << "Отсылаю на отрисовку" << endl;
             packet.clear();
-            packet << OPPONENT_TURN << buff_act.action_status << buff_act.action_from_card << buff_act.position;
+            packet << OPPONENT_TURN << buff_act.action_status << buff_act.action_from_card.getId() << buff_act.position;
             if (player_1.send(packet) != sf::Socket::Done) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
@@ -323,13 +326,13 @@ int main(int argc, char* argv[]) {
             if (buff_act.action_status == BUY_CARD) {
                 cout << "##Нужно выложить карту из маркета" << endl;
                 packet.clear();
-                packet << GET_CARD << b;  // << market_top_card;  Добавьте верхнюю карту из деки рынка
+                packet << GET_CARD << market_deck.del_back().getId();  // << market_top_card;  Добавьте верхнюю карту из деки рынка
                 if (player_2.send(packet) != sf::Socket::Done) { // Отправляем обоим что выложено с рынка
                     cout << " Ne udalosot clienta 2" << endl;
                     return 1;
                 }
                 packet.clear();
-                packet << GET_CARD << b;
+                packet << GET_CARD << market_deck.del_back().getId();
                 if (player_1.send(packet) != sf::Socket::Done) {
                     cout << " Ne udalosot clienta 2" << endl;
                     return 1;

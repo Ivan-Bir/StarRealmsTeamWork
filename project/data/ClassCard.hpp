@@ -156,11 +156,11 @@ public:
 
     
 
-
     int GetParameters();
     sf::Texture* GetTexture();
     int getId() {
         return idCard;
     }
 };
+Card return_card(int id);
 #endif  // PROJECT_CLASSDECK_UTILS_HPP_
