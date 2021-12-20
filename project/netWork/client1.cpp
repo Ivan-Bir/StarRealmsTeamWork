@@ -221,9 +221,9 @@ int main(int argc, char* argv[]) {
     //connect_logic_to_graph(market,market_cards);
 
     int flag_draw = 0;
-	while (window.isOpen()){
+	//while (window.isOpen()){
         Event event;
-		while (window.pollEvent(event)){
+		//while (window.pollEvent(event)){
             
     //'_________________________________________________________'
 
@@ -653,8 +653,8 @@ int main(int argc, char* argv[]) {
                 }
                 cout << net_status << endl;
             }
-        }
-    }
+       // }
+    //}
 
     return 0;
 }
