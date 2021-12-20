@@ -197,15 +197,15 @@ int main(int argc, char* argv[]) {
     text.setStyle(Text::Bold);
     text.setPosition(1410.f,320.f);
 
-    Text my_hp("50", font, 30);
-    my_hp.setColor(Color::Black);
-    my_hp.setStyle(Text::Bold);
-    my_hp.setPosition(20.f,520.f);
+    Text text_my_hp("50", font, 30);
+    text_my_hp.setColor(Color::Black);
+    text_my_hp.setStyle(Text::Bold);
+    text_my_hp.setPosition(20.f,520.f);
 
-    Text enemy_hp("50", font, 30);
-    enemy_hp.setColor(Color::Black);
-    enemy_hp.setStyle(Text::Bold);
-    enemy_hp.setPosition(20.f,340.f);
+    Text text_enemy_hp("50", font, 30);
+    text_enemy_hp.setColor(Color::Black);
+    text_enemy_hp.setStyle(Text::Bold);
+    text_enemy_hp.setPosition(20.f,340.f);
 
     DeckCard player_hand(5,1);
     DeckCard battle_cards(5,1);
@@ -280,8 +280,8 @@ int main(int argc, char* argv[]) {
             window.draw(giveUp);
             window.draw(Discard_rec);
             window.draw(text);
-            window.draw(my_hp);
-            window.draw(enemy_hp);
+            window.draw(text_my_hp);
+            window.draw(text_enemy_hp);
             window.display();
             //________________________________________________________
 
@@ -392,8 +392,8 @@ int main(int argc, char* argv[]) {
                         window.draw(giveUp);
                         window.draw(Discard_rec);
                         window.draw(text);
-                        window.draw(my_hp);
-                        window.draw(enemy_hp);
+                        window.draw(text_my_hp);
+                        window.draw(text_enemy_hp);
                         window.display();
 
                      // ###############################################
@@ -587,8 +587,8 @@ int main(int argc, char* argv[]) {
             window.draw(giveUp);
             window.draw(Discard_rec);
             window.draw(text);
-            window.draw(my_hp);
-            window.draw(enemy_hp);
+            window.draw(text_my_hp);
+            window.draw(text_enemy_hp);
             window.display();
 
                     if (client_socket.receive(packet) != sf::Socket::Done) { // Ожидаем запрос на отрисовку, либо о начале нашего хода
