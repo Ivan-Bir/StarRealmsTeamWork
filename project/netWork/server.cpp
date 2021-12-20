@@ -289,7 +289,7 @@ int main(int argc, char* argv[]) {
         // Ход второго игрока
         //
         packet.clear();
-        packet << YOUR_TURN;
+        packet << YOUR_TURN << player_1_hp << player_2_hp;
         if (player_2.send(packet) != sf::Socket::Done) { 
             cout << " Ne udalosot clienta 2" << endl;
             return 1;
@@ -439,7 +439,7 @@ int main(int argc, char* argv[]) {
         }
 
         packet.clear();
-        packet << YOUR_TURN;
+        packet << YOUR_TURN << player_2_hp << player_1_hp;
         if (player_1.send(packet) != sf::Socket::Done) { // Даём разрешение на ход первому игроку
             cout << " Ne udalosot clienta 2" << endl;
             return 1;

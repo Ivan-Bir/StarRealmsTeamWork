@@ -39,7 +39,7 @@ int check_if_clicked(vector <RectangleShape> &vec_shape,Event &event,DeckCard &c
     return -1;
 }
 void connect_logic_to_graph(vector<RectangleShape>&rec,DeckCard &cards){
-    for (int i=0;i<rec.size();i++){
+    for (int i = 0; i < rec.size(); ++i) {
         rec[i].setTexture(cards.deck_vec[i].GetTexture());
     }
 }

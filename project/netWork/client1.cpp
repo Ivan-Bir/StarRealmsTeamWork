@@ -197,6 +197,16 @@ int main(int argc, char* argv[]) {
     text.setStyle(Text::Bold);
     text.setPosition(1410.f,320.f);
 
+    Text my_hp("50", font, 30);
+    my_hp.setColor(Color::Black);
+    my_hp.setStyle(Text::Bold);
+    my_hp.setPosition(20.f,520.f);
+
+    Text enemy_hp("50", font, 30);
+    enemy_hp.setColor(Color::Black);
+    enemy_hp.setStyle(Text::Bold);
+    enemy_hp.setPosition(20.f,340.f);
+
     DeckCard player_hand(5,1);
     DeckCard battle_cards(5,1);
     DeckCard market_cards(5,1);
@@ -270,6 +280,8 @@ int main(int argc, char* argv[]) {
             window.draw(giveUp);
             window.draw(Discard_rec);
             window.draw(text);
+            window.draw(my_hp);
+            window.draw(enemy_hp);
             window.display();
             //________________________________________________________
 
@@ -314,6 +326,8 @@ int main(int argc, char* argv[]) {
             packet >> net_status;
             cout << ST << net_status << endl;
             int coins_per_turn = 100;
+            int my_hp = 50;
+            int enemy_hp = 50;
 
             packet.clear();
             packet << NOTHING;
@@ -378,6 +392,8 @@ int main(int argc, char* argv[]) {
                         window.draw(giveUp);
                         window.draw(Discard_rec);
                         window.draw(text);
+                        window.draw(my_hp);
+                        window.draw(enemy_hp);
                         window.display();
 
                      // ###############################################
@@ -439,7 +455,7 @@ int main(int argc, char* argv[]) {
                                     connect_logic_to_graph(PlayerHand,player_hand);
                                 }
 
-                                pos=check_if_clicked(market,event,market_cards,window); //Покупка с Маркета
+                                pos = check_if_clicked(market,event,market_cards,window); //Покупка с Маркета
                                 if (pos!=-1){
                                     if (market_cards.deck_vec[pos].CostCard<=coins_per_turn){
 
@@ -571,6 +587,8 @@ int main(int argc, char* argv[]) {
             window.draw(giveUp);
             window.draw(Discard_rec);
             window.draw(text);
+            window.draw(my_hp);
+            window.draw(enemy_hp);
             window.display();
 
                     if (client_socket.receive(packet) != sf::Socket::Done) { // Ожидаем запрос на отрисовку, либо о начале нашего хода
@@ -581,6 +599,7 @@ int main(int argc, char* argv[]) {
                     cout << ST << net_status << endl;
 
                     if (net_status == YOUR_TURN) {
+                        packet >> my_hp >> enemy_hp;
                         break;
                     }
 
