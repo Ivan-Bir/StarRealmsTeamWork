@@ -59,9 +59,9 @@ public:
     MainDeck(char ch, size_t number_duplicates = 1) {
         if (ch == 'D') {
             for (size_t k = 0; k < number_duplicates; k++) {
-                for (int i = 111; i < 155; i++){
+                for (int i = 121; i < 155; i++){
                     Card card(i);
-                    if (card.getId()!=-1){
+                    if (card.getId() != -1) {
                         Deck.push_back(card);
                     }
                 }
@@ -78,6 +78,7 @@ public:
     void pop_back();
     Card del_back();
     Card giveCard(Discard &d);
+    void update_deck();
 };
 
 

@@ -21,18 +21,9 @@ using namespace std;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 int main(int argc, char* argv[]) {
+
+    chrono::steady_clock sc;   // create an object of `steady_clock` class
     
     sf::TcpSocket client_socket;
     cout << CL << "Сокет создан!" << endl;
@@ -302,12 +293,27 @@ int main(int argc, char* argv[]) {
             window.draw(text_my_hp);
             window.draw(text_enemy_hp);
             window.display();*/
+            // if (fork() != 0) {
+            //     while (true) {
+            //         // if (event.type == Event::Closed)
+            //         //     window.close();
+            //         draw(window,BackGround,heroImage,heroStats,PlayerHand,playerOneDeck,playerOneDiscard,
+            //         BattleCards,ShowBIG,market,mainDeck,endTurnButton,EnemyBattleCards,
+            //         enemyImage,enemyDeck,history,giveUp,Discard_rec,text,
+            //         text_my_hp,text_enemy_hp,heroImage,heroStats,flag_draw,mainDeck);
+            //     }
+            // }
+            // thread drawer(draw, window,BackGround,heroImage,heroStats,PlayerHand,playerOneDeck,playerOneDiscard,
+            // BattleCards,ShowBIG,market,mainDeck,endTurnButton,EnemyBattleCards,
+            // enemyImage,enemyDeck,history,giveUp,Discard_rec,text,
+            // text_my_hp,text_enemy_hp,heroImage,heroStats,flag_draw,mainDeck);
+
             draw(window,BackGround,heroImage,heroStats,PlayerHand,playerOneDeck,playerOneDiscard,
             BattleCards,ShowBIG,market,mainDeck,endTurnButton,EnemyBattleCards,
             enemyImage,enemyDeck,history,giveUp,Discard_rec,text,
             text_my_hp,text_enemy_hp,heroImage,heroStats,flag_draw,mainDeck);
             //________________________________________________________
-            rec=client_socket.receive(packet);
+            rec = client_socket.receive(packet);
             if (rec != sf::Socket::Done) {
                 cout << " Ne udalos" << endl;
             }
@@ -339,7 +345,7 @@ int main(int argc, char* argv[]) {
             for (int i = 0; i < 10 ;i++) {
                 cout << Deck(i).getId() << ", ";
             }
-            rec= client_socket.receive(packet);
+            rec = client_socket.receive(packet);
             if (rec != sf::Socket::Done) { // Ожидаем статус YOUR_TURN или WAIT
                 cout << " Ne udaloss" << endl;
             }
@@ -358,7 +364,12 @@ int main(int argc, char* argv[]) {
             packet.clear();
             packet << NOTHING;
             client_socket.setBlocking(false);
+
+            chrono::steady_clock scc;
+            std::chrono::_V2::steady_clock::time_point start; 
             while (true) {
+                //start = scc.now();     // start timer
+                
                 switch (net_status) {
                 case YOUR_TURN: 
                     cout << "My turn" << endl;
@@ -385,10 +396,13 @@ int main(int argc, char* argv[]) {
 
                    
                     while(true) { // Todo Таймер на 45 сек
-                        while (window.pollEvent(event)){
-
+                        while (window.pollEvent(event)) {
+                            if (event.type == Event::MouseMoved) {
+                                continue;
+                            }
+                        start = scc.now();
                      // ###############################################
-                        cout << "Message 1" << endl;
+                        //cout << "Message 1" << endl;
                         window.clear(Color::White);
                         window.draw(BackGround);
                         window.draw(heroImage);
@@ -423,7 +437,7 @@ int main(int argc, char* argv[]) {
                         window.draw(text_my_hp);
                         window.draw(text_enemy_hp);
                         window.display();
-                        cout << "Message 2" << endl;
+                        //cout << "Message 2" << endl;
                        
                         
 
@@ -447,50 +461,54 @@ int main(int argc, char* argv[]) {
                             // {
                             //     cout << "LKM ";
                             // }
-                            cout << "Message 3" << endl;
+                            //cout << "Message 3" << endl;
                             ShowBIG.setTexture(empty_texture);
                             IntRect sprite_rect(0,0,300,420);
                             ShowBIG.setTextureRect(sprite_rect);
-                            flag_draw=0;
-                            cout << "Message 4" << endl;
+                            flag_draw = 0;
+                            //cout << "Message 4" << endl;
+
+                            
+                            
+                            
                             if (event.mouseButton.button == sf::Mouse::Left) { // Розыгрыш карты
-                                int pos = check_if_clicked(PlayerHand, event, player_hand,window);
+                                int pos = check_if_clicked(PlayerHand, event, player_hand, window);
 
                                 if (pos!=-1) {
-                                    move_card(PlayerHand, player_hand, BattleCards,battle_cards,pos);
+                                    move_card(PlayerHand, player_hand, BattleCards, battle_cards, pos);
                                     
                                     action_status = PLAY_CARD;
                                     packet.clear();
                                     buff_card_id = player_hand.deck_vec[pos].getId();
                                     packet << action_status << buff_card_id << pos;
                                 }
-                                cout << "Message 5" << endl;
+                                //cout << "Message 5" << endl;
                                 if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
                                     //EndTurn
 
                                     packet.clear();
                                     packet << END_TURN;
-                                    cout << "Message 6" << endl;
+                                    //cout << "Message 6" << endl;
                                     endTurnButton.setFillColor(Color(210, 0, 0));
                                     for (int i = 0; i < PlayerHand.size(); i++){
-                                        if (player_hand.deck_vec[i].getId()!=0){
+                                        if (player_hand.deck_vec[i].getId() != 0){
                                             d.get_card(PlayerHand,player_hand,i,discrad_texture);
                                             //cout<<discrad_texture.getNativeHandle()<<" ";
                                         }
                                     }
-                                    cout << "Message 7" << endl;
+                                    //cout << "Message 7" << endl;
                                     for (int i = 0; i < BattleCards.size(); i++){
-                                        if (battle_cards.deck_vec[i].getId()!=0){
+                                        if (battle_cards.deck_vec[i].getId() != 0){
                                             d.get_card(BattleCards,battle_cards,i,discrad_texture);
                                         }
    
                                     }
-                                    cout << "Message 8" << endl;
+                                    //cout << "Message 8" << endl;
                                     Deck.giveHand(player_hand,d,5,discrad_texture);
                                     connect_logic_to_graph(PlayerHand,player_hand);
                                     break;
                                 }
-                                cout << "Message 9" << endl;
+                                //cout << "Message 9" << endl;
                                 pos = check_if_clicked(market,event,market_cards,window); //Покупка с Маркета
                                 if (pos!=-1){
                                     if (market_cards.deck_vec[pos].CostCard<=coins_per_turn){
@@ -500,30 +518,34 @@ int main(int argc, char* argv[]) {
                                         action_status = BUY_CARD;
                                         packet << action_status << buff_card_id << pos;
                                         cout << "Message 10" << endl;
+
                                         d.get_card(market,market_cards,pos,discrad_texture);
                                         connect_logic_to_graph(market,market_cards);
-
-                                        // client_socket.receive(packet);
-                                        // packet>>action_status>>buff_card;
-                                        // packet>>pos;
 
                                         market_cards.deck_vec[pos]=buff_card;
                                         connect_logic_to_graph(market,market_cards);
                                     }
                                 }
                             }
+                            // auto end = scc.now();
+                            // auto time_span = static_cast<chrono::duration<double>>(end - start);
+                            // cout<<"Operation took: "<< time_span.count()<<" seconds !!!" << endl;
+
+                            
                             cout << "Message 11" << endl;
+
+                            
 
                             if (event.mouseButton.button == sf::Mouse::Middle){
                                 //Добавить  просмотр вывода карт противника
                                 int pos=check_if_clicked(PlayerHand,event,player_hand,window);
                                 if (pos!=-1) {
-                                    flag_draw=1;
+                                    flag_draw = 1;
                                     ShowBIG.setTexture(*(player_hand.deck_vec[pos].GetTexture()));
                                 }
                                 pos=check_if_clicked(BattleCards,event,battle_cards,window);
                                 if (pos!=-1) {
-                                    flag_draw=1;
+                                    flag_draw = 1;
                                     ShowBIG.setTexture(*(battle_cards.deck_vec[pos].GetTexture()));
                                 }
                                 pos=check_if_clicked(market,event,market_cards,window);
@@ -538,38 +560,46 @@ int main(int argc, char* argv[]) {
                                 }
                             }
                         }
-                        cout << "Message 12" << endl;
+                        //cout << "Message 12" << endl;
                         //######################################
 
-
+                        // auto start = scc.now();
+                            
                         //cout << " Пытаюсь отправить... " << action_status << endl;
                         if (client_socket.send(packet) != sf::Socket::Done) { // Отправляем Action на сервер
                             cout << " Ne udalos1" << endl;
                         }
+
+                        // auto end = scc.now(); 
+                        // auto time_span = static_cast<chrono::duration<double>>(end - start);
+                        // cout<<"Send took: "<< time_span.count()<<" seconds !!!" << endl;
+
                         //cout << "Отправлено действие" << endl;
-                        cout << "Message 13" << endl;
+                        //cout << "Message 13" << endl;
+                        start = scc.now();
+
                         if (action_status == PLAY_CARD && buff_card.CoinCard != 0) {
                             coins_per_turn += buff_card.CoinCard;
                             cout << "$$ Получено монет с розыгрыша= " << buff_card.CoinCard
                                 << "$$ Монет на текущий момент = " << coins_per_turn << endl;
                         }
-                        cout << "Message 14" << endl;
+                        //cout << "Message 14" << endl;
 
                         if (action_status == UTIL_CARD && buff_card.UtRule.ut_CoinCard != 0) {
                             coins_per_turn += buff_card.UtRule.ut_CoinCard;
                             cout << "$$ Получено монет при удалении = " << buff_card.UtRule.ut_CoinCard
                                 << " $$ Монет на текущий момент = " << coins_per_turn << endl;
                         }
-                        cout << "Message 15" << endl;
+                        //cout << "Message 15" << endl;
 
                         if (action_status == BUY_CARD) { // Если карту купили, то нужно принять от сервера какую нужно выложить в свободный слот маркета
                             cout << "Жду карту от сервера" << endl;
                             rec=client_socket.receive(packet);
                             while (rec==sf::Socket::NotReady){
                                 rec=client_socket.receive(packet);
-                                sleep(0.01);
+                                sleep(0.9);
                             }
-                            cout << "Message 15" << endl;
+                            //cout << "Message 15" << endl;
                             if (rec != sf::Socket::Done) {
                                 cout << " Ne udalos1" << endl;
                                 //return 1;
@@ -580,7 +610,7 @@ int main(int argc, char* argv[]) {
                             buff_card.texture.loadFromFile(buff_card.path_file_img);
                             packet >> pos;
                             //cout << " Получена карта, pos = " << pos << buff_card.GetParameters()<< endl;
-                            cout << "Message 16" << endl;
+                            //cout << "Message 16" << endl;
                             if (action_status == GET_CARD) {
                                 /*
                                 Добавьте карту в свободный слот маркета по-братски
@@ -591,15 +621,22 @@ int main(int argc, char* argv[]) {
                                 connect_logic_to_graph(market, market_cards);
                                 //cout << " Добавлено в маркет " << endl;
                                //---------------------------------------------
-                               cout << "Message 17" << endl;
+                               //cout << "Message 17" << endl;
                             }
                         }
                         
+
                         if (action_status == END_TURN) {
                             net_status = WAIT;
                             break;
                         }
-                        cout << "Message 18" << endl;
+                        //cout << "Message 18" << endl;
+                        }
+                        auto end = scc.now(); 
+                        auto time_span = static_cast<chrono::duration<double>>(end - start);
+                        cout<<"Main loop took: "<< time_span.count()<<" seconds !!!" << endl;
+                        if (time_span.count() > 5.0) {
+                            return 1;
                         }
                     }
                     break;
@@ -640,9 +677,11 @@ int main(int argc, char* argv[]) {
             window.draw(text_my_hp);
             window.draw(text_enemy_hp);
             window.display();
-                    rec=client_socket.receive(packet);
-                    while (rec==sf::Socket::NotReady){
-                        rec=client_socket.receive(packet);
+            sleep(1);
+                    rec = client_socket.receive(packet);
+                    while (rec == sf::Socket::NotReady){
+                        rec = client_socket.receive(packet);
+                        sleep(0.9);
                     }
                     if (rec  != sf::Socket::Done) { // Ожидаем запрос на отрисовку, либо о начале нашего хода
                         cout << " Ne udalos2" << endl;
@@ -676,7 +715,8 @@ int main(int argc, char* argv[]) {
                             connect_logic_to_graph(market,market_cards);
                             rec=client_socket.receive(packet);
                             while (rec==sf::Socket::NotReady){
-                                rec=client_socket.receive(packet);
+                                rec = client_socket.receive(packet);
+                                sleep(0.9);
                             }   
                             if (rec != sf::Socket::Done) {
                                 cout << " Ne udalos1" << endl;
@@ -693,9 +733,10 @@ int main(int argc, char* argv[]) {
                                 connect_logic_to_graph(market,market_cards);
                             }
                         }
-                        
+
                         cout << action_status << " -- " << buff_card.nameCard << " -- " << pos << endl;
                         net_status = WAIT;
+
                     }
                     break;
 
@@ -705,8 +746,6 @@ int main(int argc, char* argv[]) {
                 }
                 cout << net_status << endl;
             }
-       // }
-    //}
 
     return 0;
 }

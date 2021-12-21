@@ -14,6 +14,15 @@ void MainDeck::append(Card one_card) {
     Deck.push_back(one_card);
 }
 
+void MainDeck::update_deck() {
+    for (int i = 121; i < 155; i++){
+        Card card(i);
+        if (card.getId() != -1) {
+            this -> append(card);
+        }
+    }
+}
+
 size_t MainDeck::getSize() {
     return Deck.size();
 }
@@ -50,8 +59,8 @@ Card MainDeck::giveCard(Discard &d){
 }
 Card MainDeck::del_back(){
     cout << "Это буффер ";
-    Card card(111,0);
-    card=Deck[Deck.size()-1];
+    Card card(111, 0);
+    card = Deck[Deck.size() - 1];
     Deck.pop_back();
     cout << card.getId() << " ,";
     return card;
