@@ -194,6 +194,11 @@ int main(int argc, char* argv[]) {
                 }
                 cout << "##Отправил запрос маркету" << endl;
             }
+            if (active_status == PLAY_CARD){//Отправляем карту 2 игроку на прорисовку
+                packet.clear();
+                packet << PLAY_CARD <<  111 << buff_act.position;//научить понимать какую карту выложил 1 игрок
+                //______________________Посмотреть + разобрать
+            }
 
             if (active_status == END_TURN) {
                 cout << "Поступил END_TURN" << endl;

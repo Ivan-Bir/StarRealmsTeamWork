@@ -74,15 +74,15 @@ int main(int argc, char* argv[]) {
     playerOneDeck.move(1450, 670);
     playerOneDiscard.move(1450, 790);
 
-    heroImage.setFillColor(Color(175, 180, 240));
-    heroStats.setFillColor(Color(175, 180, 240));
+    /*heroImage.setFillColor(Color::Transparent);*/
+    heroStats.setFillColor(Color::Transparent);
 
     for (int i=0;i<PlayerHand.size();i++){
         PlayerHand[i].setFillColor(Color(175, 180, 240));
     }
 
-    playerOneDeck.setFillColor(Color(175, 180, 240));
-    playerOneDiscard.setFillColor(Color(175, 180, 240));
+    playerOneDeck.setFillColor(Color::Transparent);
+    playerOneDiscard.setFillColor(Color::Transparent);
 
 
     std::vector <RectangleShape> BattleCards;
@@ -102,11 +102,11 @@ int main(int argc, char* argv[]) {
     BattleCards[5].move(1306, 482);
     BattleCards[6].move(1441, 482);
 
-    outpost1.setFillColor(Color(175, 180, 240));
-    outpost2.setFillColor(Color(175, 180, 240));
+    outpost1.setFillColor(Color::Transparent);
+    outpost2.setFillColor(Color::Transparent);
     for (int i=0;i<BattleCards.size();i++){
         BattleCards[i].setFillColor(Color(175, 180, 240));
-    }
+   }
 
     RectangleShape additionalMarket(Vector2f(120.f, 168.f));
 
@@ -124,13 +124,13 @@ int main(int argc, char* argv[]) {
     market[4].move(940, 294);
     mainDeck.move(1075, 318);
 
-    additionalMarket.setFillColor(Color(175, 180, 240));
+    additionalMarket.setFillColor(Color::Transparent);
 
-     for (int i=0;i<market.size();i++){
-        market[i].setFillColor(Color(175, 180, 240));
-    }
+    /*for (int i=0;i<market.size();i++){
+        market[i].setFillColor(Color::Transparent);
+    }*/
 
-    mainDeck.setFillColor(Color(175, 180, 240));
+    //mainDeck.setFillColor(Color::Transparent);
 
 
 	
@@ -139,7 +139,7 @@ int main(int argc, char* argv[]) {
 	endTurnButton.setFillColor(Color(175, 180, 240));
     RectangleShape Discard_rec(Vector2f(150.f, 210.f));
     Discard_rec.move(1380.f, 400.f);
-    Discard_rec.setFillColor(Color(175, 180, 240));
+    //Discard_rec.setFillColor(Color(175, 180, 240));
     RectangleShape enemyOutpost1(Vector2f(168.f, 120.f));
     RectangleShape enemyOutpost2(Vector2f(168.f, 120.f));
 
@@ -162,8 +162,8 @@ int main(int argc, char* argv[]) {
         EnemyBattleCards[i].setFillColor(Color(175, 180, 240));
     }
 
-    enemyOutpost1.setFillColor(Color(175, 180, 240));
-    enemyOutpost2.setFillColor(Color(175, 180, 240));
+    //enemyOutpost1.setFillColor(Color(175, 180, 240));
+    //enemyOutpost2.setFillColor(Color(175, 180, 240));
 
     RectangleShape enemyImage(Vector2f(220.f, 308.f));
     RectangleShape enemyDeck(Vector2f(220.f, 90.f));
@@ -175,10 +175,10 @@ int main(int argc, char* argv[]) {
     history.move(1120, 20);
     giveUp.move(1360, 20);
 
-    enemyImage.setFillColor(Color(175, 180, 240));
-    enemyDeck.setFillColor(Color(175, 180, 240));
+    //enemyImage.setFillColor(Color(175, 180, 240));
+    enemyDeck.setFillColor(Color::Transparent);
     history.setFillColor(Color(175, 180, 240));
-    giveUp.setFillColor(Color(175, 180, 240));
+    giveUp.setFillColor(Color::Transparent);
 
 
 
@@ -230,7 +230,11 @@ int main(int argc, char* argv[]) {
     DeckCard market_cards(5,1);
     DeckCard enemy_battle_cards(5,1);
     Discard d;
-    
+    for (int i=0;i<BattleCards.size();i++){
+        battle_cards.deck_vec[i]=empty_card;
+        empty_card.texture.loadFromFile(empty_card.path_file_img);
+        BattleCards[i].setTexture(&empty_card.texture);
+    }
     MainDeck Deck(0,'m');
     //MainDeck MarketDeck(6,'m');
     //Deck.giveHand(player_hand,d,5,discrad_texture);
@@ -386,6 +390,9 @@ int main(int argc, char* argv[]) {
                    
                     while(true) { // Todo Таймер на 45 сек
                         while (window.pollEvent(event)){
+                            if (event.type==Event::MouseMoved){
+                                continue;
+                            }
 
                      // ###############################################
                         
@@ -597,14 +604,15 @@ int main(int argc, char* argv[]) {
                     cout << "wait" << endl;
                     window.clear(Color::Blue);
             //window.draw(BackGround);
+            window.clear();
             window.draw(heroImage);
             window.draw(heroStats);
             draw_rec_vector(PlayerHand,window);
             window.draw(playerOneDeck);
             window.draw(playerOneDiscard);
 
-            window.draw(outpost1);
-            window.draw(outpost2);
+            //window.draw(outpost1);
+            //window.draw(outpost2);
             draw_rec_vector(BattleCards,window);
             if (flag_draw){
                 window.draw(ShowBIG);
@@ -617,8 +625,8 @@ int main(int argc, char* argv[]) {
 
             window.draw(endTurnButton);
 
-            window.draw(enemyOutpost1);
-            window.draw(enemyOutpost2);
+            //window.draw(enemyOutpost1);
+            //window.draw(enemyOutpost2);
             draw_rec_vector(EnemyBattleCards,window);
             window.draw(enemyImage);
             window.draw(enemyDeck);
@@ -655,7 +663,11 @@ int main(int argc, char* argv[]) {
                         /*
                         Используйте полученные данные, чтобы отобразить действие оппонента
                         */
-                        if (action_status == PLAY_CARD) {
+                        if (action_status == PLAY_CARD) {//Карты оппонента пустые и отображаются карты из маркета ,Пофиксить
+                            EnemyBattleCards[pos].setTexture(&buff_card.texture);
+                            enemy_battle_cards.deck_vec[pos]=buff_card;
+                            enemy_battle_cards.avaliable[pos]=1;
+
                         }
 
                         if (action_status == BUY_CARD) { // Новую карту в маркете тоже нужно отрисовать
