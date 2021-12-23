@@ -196,7 +196,8 @@ int main(int argc, char* argv[]) {
             }
             if (active_status == PLAY_CARD){//Отправляем карту 2 игроку на прорисовку
                 packet.clear();
-                packet << PLAY_CARD <<  111 << buff_act.position;//научить понимать какую карту выложил 1 игрок
+                packet << PLAY_CARD <<  buff_act.action_from_card.getId() << buff_act.position;//научить понимать какую карту выложил 1 игрок
+                cout<<"GOT CARD";
                 //______________________Посмотреть + разобрать
             }
 
