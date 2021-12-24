@@ -261,7 +261,8 @@ int main(int argc, char* argv[]) {
             int net_status = 0;
             sf::Packet packet;
             int pos = 0;
-            int buff_card_id=0;
+            int buff_card_id = 0;
+            int less_card = 0;
             //DeckCard player_deck(5,1);
 
             // if (client_socket.receive(packet) != sf::Socket::Done) {  //Получен статус на начало игры
@@ -363,9 +364,9 @@ int main(int argc, char* argv[]) {
 
             packet >> net_status;
             cout << ST << net_status << endl;
-            int coins_per_turn = 0;
-            int my_hp = 50;
-            int enemy_hp = 50;
+            int coins_per_turn = 100;
+            int my_hp = 30;
+            int enemy_hp = 30;
 
             packet.clear();
             packet << NOTHING;
@@ -376,15 +377,12 @@ int main(int argc, char* argv[]) {
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
-                    coins_per_turn = 0;
+                    coins_per_turn = 100;
                     cout << "My turn";
                     endTurn.loadFromFile("../include/images/end_turn_start.jpg");
-                    
-
-                    Deck.giveHand(player_hand,d ,5,discrad_texture);
-                    cout<<"after givehand";
+                    Deck.giveHand(player_hand,d ,(5-less_card),discrad_texture);
+                    less_card = 0;
                     connect_logic_to_graph(PlayerHand, player_hand);
-                    cout<<"after connect_logic ";
                      /*while (1) {
                          cout << "!";
 
@@ -690,7 +688,7 @@ int main(int argc, char* argv[]) {
                     }
                     
                     if (net_status == YOUR_TURN) {
-                        packet >> my_hp >> enemy_hp;
+                        packet >> my_hp >> enemy_hp >> less_card;
                         action_status = NOTHING;
                         cout << "Смена хода " << endl;
                         break;

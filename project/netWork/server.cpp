@@ -46,8 +46,8 @@ int main(int argc, char* argv[]) {
     cout << "Карт в деке маркета = " << market_deck.getSize() << endl;
     cout << "Создаю карту" << endl;
 
-    int player_1_hp = 10;
-    int player_2_hp = 10;
+    int player_1_hp = 30;
+    int player_2_hp = 30;
 
     int total_dmg = 0;
     int less_card = 0;
@@ -279,7 +279,6 @@ int main(int argc, char* argv[]) {
 
         total_dmg = 0;
         restore_hp = 0;
-        less_card = 0;
         coins_per_turn = 0;
         turn_log.clear();
 
@@ -303,7 +302,8 @@ int main(int argc, char* argv[]) {
         
         // Ход второго игрока
         packet.clear();
-        packet << YOUR_TURN << player_1_hp << player_2_hp;
+        packet << YOUR_TURN << player_1_hp << player_2_hp << less_card;
+        less_card = 0;
         if (player_2.send(packet) != sf::Socket::Done) { 
             cout << " Ne udalosot clienta 2" << endl;
             return 1;
@@ -453,7 +453,6 @@ int main(int argc, char* argv[]) {
 
         total_dmg = 0;
         restore_hp = 0;
-        less_card = 0;
         coins_per_turn = 0;
         turn_log.clear();
 
@@ -476,7 +475,8 @@ int main(int argc, char* argv[]) {
         }
 
         packet.clear();
-        packet << YOUR_TURN << player_2_hp << player_1_hp;
+        packet << YOUR_TURN << player_2_hp << player_1_hp << less_card;
+        less_card = 0;
         if (player_1.send(packet) != sf::Socket::Done) { // Даём разрешение на ход первому игроку
             cout << " Ne udalosot clienta 2" << endl;
             return 1;
