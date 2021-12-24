@@ -30,8 +30,10 @@ void MainDeck::giveHand(DeckCard &hand, Discard &d,int n,Texture &disc_text){
         hand.deck_vec[i].TargetCard=4;
         Deck.pop_back();
         if (Deck.size()==0){
-            Deck.insert(Deck.end(), d.discard.begin(), d.discard.end());
-            disc_text.loadFromFile("project/include/images/backplate.jpg");
+            for (int j=0;j<d.discard.size();j++){
+                Deck.push_back(d.discard[j]);
+            }
+            disc_text.loadFromFile("../include/images/backplate.jpg");
             d.clear();
         }
         

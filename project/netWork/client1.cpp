@@ -136,7 +136,10 @@ int main(int argc, char* argv[]) {
 	
     RectangleShape endTurnButton(Vector2f(130.f, 90.f));
     endTurnButton.move(Vector2f(1380.f, 294.f));
-	endTurnButton.setFillColor(Color(175, 180, 240));
+	endTurnButton.setFillColor(Color::White);
+    sf::Texture endTurn;
+    endTurn.loadFromFile("../include/images/end_turn_start.jpg");
+    endTurnButton.setTexture(&endTurn);
     RectangleShape Discard_rec(Vector2f(150.f, 210.f));
     Discard_rec.move(1380.f, 400.f);
     //Discard_rec.setFillColor(Color(175, 180, 240));
@@ -193,11 +196,15 @@ int main(int argc, char* argv[]) {
     ShowBIG.move(Vector2f(20.f, 330.f));
     sf::Texture background_first;
     sf::Texture background_sec;
+    sf::Texture coin_texture;
     background_first.loadFromFile("../include/images/background_first.jpg");
     background_sec.loadFromFile("../include/images/background_sec.jpg");
+    coin_texture.loadFromFile("../include/images/coin.png");
     IntRect backgr_rect(0,0,100000,10000);
     sf::Sprite BackGroundFirst(background_first);
     sf::Sprite BackGroundSec(background_sec);
+    sf::Sprite coin(coin_texture);
+    coin.move(260,720);
     BackGroundFirst.setTextureRect(backgr_rect);
     BackGroundSec.setTextureRect(backgr_rect);
     sf::Texture hero_image;
@@ -210,17 +217,19 @@ int main(int argc, char* argv[]) {
     backplate.loadFromFile("../include/images/backplate.jpg");
     mainDeck.setTexture(&backplate);
     sf::Texture discrad_texture;
+
     discrad_texture.loadFromFile("../include/images/backplate.jpg");
     Discard_rec.setTexture(&discrad_texture);
+
+
     Font font;
     font.loadFromFile("../include/Fonts/NesobriteScLt Regular.ttf");
-    Text text("End turn",font,20);
+    Text text("",font,20);
     text.setColor(Color::Black);
     text.setStyle(Text::Bold);
     text.setPosition(1410.f,320.f);
-
-    Text text_my_hp("50", font, 30);
-    text_my_hp.setColor(Color::Black);
+    Text text_my_hp("", font, 30);
+    text_my_hp.setColor(Color::Green);
     text_my_hp.setStyle(Text::Bold);
     text_my_hp.setPosition(20.f,520.f);
 
@@ -229,6 +238,11 @@ int main(int argc, char* argv[]) {
     text_enemy_hp.setStyle(Text::Bold);
     text_enemy_hp.setPosition(20.f,340.f);
 
+    Text coin_count("",font,30);
+    coin_count.setColor(Color::Black);
+    coin_count.setStyle(Text::Bold);
+    coin_count.setPosition(320,740);
+
     DeckCard player_hand(5,1);
     DeckCard battle_cards(5,1);
     DeckCard market_cards(5,1);
@@ -236,8 +250,10 @@ int main(int argc, char* argv[]) {
     Discard d;
     for (int i=0;i<BattleCards.size();i++){
         battle_cards.deck_vec[i]=empty_card;
+        battle_cards.deck_vec[i]=empty_card;
     }
-    cout<<"32131231";
+    connect_logic_to_graph(BattleCards,battle_cards);
+    connect_logic_to_graph(PlayerHand,player_hand);
     MainDeck Deck(0,'m');
     //MainDeck MarketDeck(6,'m');
     //Deck.giveHand(player_hand,d,5,discrad_texture);
@@ -358,7 +374,7 @@ int main(int argc, char* argv[]) {
 
             packet >> net_status;
             cout << ST << net_status << endl;
-            int coins_per_turn = 100;
+            int coins_per_turn = 10;
             int my_hp = 50;
             int enemy_hp = 50;
 
@@ -368,8 +384,10 @@ int main(int argc, char* argv[]) {
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN: 
-                    cout << "My turn" << endl;
-                    coins_per_turn = 100;
+                    cout << "My turn";
+                    cout<<coins_per_turn<<" ";
+                    endTurn.loadFromFile("../include/images/end_turn_start.jpg");
+                    
 
                     Deck.giveHand(player_hand,d ,5,discrad_texture);
                     cout<<"after givehand";
@@ -410,7 +428,14 @@ int main(int argc, char* argv[]) {
 
                        // window.draw(outpost1);
                         //window.draw(outpost2);
+                        window.draw(coin);
                         draw_rec_vector(BattleCards,window);
+                        text_my_hp.setString("HP:"+to_string(my_hp));
+                        coin_count.setString(to_string(coins_per_turn));
+                        window.draw(text_my_hp);
+                        window.draw(coin_count);
+                        window.draw(text_enemy_hp);
+                        window.draw(text);
                         if (flag_draw){
                             window.draw(ShowBIG);
                         }
@@ -430,11 +455,9 @@ int main(int argc, char* argv[]) {
                         window.draw(history);
                         window.draw(giveUp);
                         window.draw(Discard_rec);
-                        window.draw(text);
-                        window.draw(text_my_hp);
-                        window.draw(text_enemy_hp);
+                        //std::ostream os_my_hp;
+                        //os_my_hp<<my_hp;
                         window.display();
-                        
                        
                         
 
@@ -466,17 +489,17 @@ int main(int argc, char* argv[]) {
                                 int pos = check_if_clicked(PlayerHand, event, player_hand,window);
 
                                 if (pos!=-1) {
-                                    move_card(PlayerHand, player_hand, BattleCards,battle_cards,pos);
                                     
                                     action_status = PLAY_CARD;
                                     packet.clear();
                                     buff_card_id = player_hand.deck_vec[pos].getId();
                                     packet << action_status << buff_card_id << pos;
+                                    move_card(PlayerHand, player_hand, BattleCards,battle_cards,pos);
                                 }
 
                                 if (endTurnButton.getGlobalBounds().contains(window.mapPixelToCoords(sf::Mouse::getPosition(window)))){
                                     //EndTurn
-
+                                    endTurn.loadFromFile("../include/images/end_turn_end.jpg");
                                     packet.clear();
                                     packet << END_TURN;
                                     action_status=END_TURN;
@@ -493,8 +516,6 @@ int main(int argc, char* argv[]) {
                                         }
    
                                     }
-
-                                    Deck.giveHand(player_hand,d,5,discrad_texture);
                                     connect_logic_to_graph(PlayerHand,player_hand);
                                     
                                 }
@@ -613,6 +634,7 @@ int main(int argc, char* argv[]) {
                 case WAIT: 
                     cout << "wait" << endl;
                     //window.clear(Color::Blue);
+                    //connect_logic_to_graph(PlayerHand,player_hand);
                     window.clear();
                     window.draw(BackGroundSec);
                     window.draw(heroImage);
@@ -643,6 +665,7 @@ int main(int argc, char* argv[]) {
                     window.draw(text);
                     window.draw(text_my_hp);
                     window.draw(text_enemy_hp);
+                    window.draw(coin);
                     window.display();
                     rec=client_socket.receive(packet);
                     while (rec==sf::Socket::NotReady){
@@ -672,8 +695,8 @@ int main(int argc, char* argv[]) {
                         Используйте полученные данные, чтобы отобразить действие оппонента
                         */
                         if (action_status == PLAY_CARD) {//Карты оппонента пустые и отображаются карты из маркета ,Пофиксить
-                            EnemyBattleCards[pos].setTexture(&buff_card.texture);
                             enemy_battle_cards.deck_vec[pos]=buff_card;
+                            EnemyBattleCards[pos].setTexture(&enemy_battle_cards.deck_vec[pos].texture);
                             enemy_battle_cards.avaliable[pos]=1;
                             cout<<"GOT CARD";
 
@@ -714,7 +737,6 @@ int main(int argc, char* argv[]) {
                 default: cout << "DEFAULT" << endl; break;
                 }
                 cout << net_status << endl;
-                cout<<"321321";
             }
        // }
     //}
