@@ -18,11 +18,6 @@
 
 using namespace std;
 
-
-// int GetCoins() {
-//     return;
-// }
-
 int main(int argc, char* argv[]) {
     srand(time(NULL));
     sf::TcpListener listener;
@@ -43,22 +38,16 @@ int main(int argc, char* argv[]) {
     }
     cout << SER << "Все на месте" << endl;
 
-    char buffer[MAX_BUFF];
-    
-    // vector<int> deck;
-    // for (size_t i = 0; i < 10; i ++) {
-    //     deck.push_back(rand() % 100);
-    // }
     sf::Packet packet;
     int buff_card_id = 0;
     MainDeck market_deck('D', 2);
-    //Не забыть сделать шаффл
+ 
     market_deck.shuffle_deck();
     cout << "Карт в деке маркета = " << market_deck.getSize() << endl;
     cout << "Создаю карту" << endl;
 
-    int player_1_hp = 50;
-    int player_2_hp = 50;
+    int player_1_hp = 10;
+    int player_2_hp = 10;
 
     int total_dmg = 0;
     int less_card = 0;
@@ -142,8 +131,10 @@ int main(int argc, char* argv[]) {
     while (true) {
         while (player_1_active) {
             //cout << "Готов обработать Action" << endl;
-            int rec=player_1.receive(packet);
-            if (rec==sf::Socket::NotReady){
+            active_status = NOTHING;
+
+            int rec = player_1.receive(packet);
+            if (rec == sf::Socket::NotReady){
                 continue;   
             }
             if (rec != sf::Socket::Done) {
@@ -151,18 +142,17 @@ int main(int argc, char* argv[]) {
                 return 1;
             }
             
-
             // Принимаем пакет от активного игрока
             packet >> active_status;
             if (active_status == NOTHING) {
                 cout << " Skipped NOTHING" << endl;
                 continue;
             } else {
-                cout << active_status << endl;
+                cout << "active_status = " << active_status << endl;
             }
             buff_act.action_status = active_status;
             packet >> buff_card_id;
-            buff_act.action_from_card=return_card(buff_card_id);
+            buff_act.action_from_card = return_card(buff_card_id);
             packet >> buff_act.position;
             turn_log.push_back(buff_act);
 
@@ -216,7 +206,7 @@ int main(int argc, char* argv[]) {
 
         // Обработка действий за ход
         //cout << "Конец хода первого" << endl;
-
+        cout << "Оработка конца ходa" << endl;
         battle_log.push_back(turn_log);
 
         is_played_green_race = 0;
@@ -314,50 +304,66 @@ int main(int argc, char* argv[]) {
         }
 
         while (player_2_active) {
-            int rec=player_2.receive(packet);
-            //cout << "Готов обработать Action2" << endl;
-            if (rec == sf::Socket::NotReady) {
-                continue;
+           //cout << "Готов обработать Action" << endl;
+            active_status = NOTHING;
+
+            int rec = player_2.receive(packet);
+            if (rec == sf::Socket::NotReady){
+                continue;   
             }
             if (rec != sf::Socket::Done) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
             }
-            cout << "@Получил Action" << endl;
-
+            
             // Принимаем пакет от активного игрока
             packet >> active_status;
+            if (active_status == NOTHING) {
+                cout << " Skipped NOTHING" << endl;
+                continue;
+            } else {
+                cout << "active_status = " << active_status << endl;
+            }
             buff_act.action_status = active_status;
-            packet >>  buff_card_id;
-            buff_act.action_from_card=return_card(buff_card_id);
+            packet >> buff_card_id;
+            buff_act.action_from_card = return_card(buff_card_id);
             packet >> buff_act.position;
             turn_log.push_back(buff_act);
 
             // Инфу о действии отсылаем другому игроку на отрисовку
-            cout << "Отсылаю на отрисовку" << endl;
+            //cout << "Отсылаю на отрисовку" << endl;
             packet.clear();
             packet << OPPONENT_TURN << buff_act.action_status << buff_act.action_from_card.getId() << buff_act.position;
             if (player_1.send(packet) != sf::Socket::Done) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
             }
-            cout << "Отправлено на отрисовку" << endl;
-
-            if (buff_act.action_status == BUY_CARD) {
+            //cout << "Отправлено на отрисовку" << endl;
+            chrono::steady_clock sc;
+            std::chrono::_V2::steady_clock::time_point start;
+            std::chrono::_V2::steady_clock::time_point end;
+            if (active_status == BUY_CARD) {
+                
+                start = sc.now(); 
                 cout << "##Нужно выложить карту из маркета" << endl;
+
+                if (market_deck.getSize() == 0) {
+                    market_deck.update_deck(); // добавляется набор с одной копией карт
+                }
+
                 packet.clear();
-                packet << GET_CARD << market_deck.del_back().getId();  // << market_top_card;  Добавьте верхнюю карту из деки рынка
-                if (player_2.send(packet) != sf::Socket::Done) { // Отправляем обоим что выложено с рынка
-                    cout << " Ne udalosot clienta 2" << endl;
+                packet << GET_CARD << market_deck.del_back().getId() << buff_act.position;  // Добавьте верхнюю карту из деки рынка
+                if (player_2.send(packet) != sf::Socket::Done) {
+                    cout << " Ne udalosot clienta" << endl;
                     return 1;
                 }
-                packet.clear();
-                packet << GET_CARD << market_deck.del_back().getId();
                 if (player_1.send(packet) != sf::Socket::Done) {
-                    cout << " Ne udalosot clienta 2" << endl;
+                    cout << " Ne udalosot clienta" << endl;
                     return 1;
                 }
                 cout << "##Отправил запрос маркету" << endl;
+                end = sc.now(); 
+                
             }
 
             if (active_status == END_TURN) {
@@ -366,13 +372,14 @@ int main(int argc, char* argv[]) {
                 player_1_active = true;
                 break;
             }
+            auto time_span = static_cast<chrono::duration<double>>(end - start);
+            cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
             cout << "nov zahod" << endl;
-            sleep(0.01);
             // active_status = END_TURN;
         }
 
         // Обработка действий за ход
-        cout << "Конец хода первого" << endl;
+        //cout << "Конец хода первого" << endl;
 
         battle_log.push_back(turn_log);
 

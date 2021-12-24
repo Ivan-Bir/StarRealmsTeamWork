@@ -34,13 +34,18 @@ Card MainDeck::operator() (size_t pos) {
 void MainDeck::giveHand(DeckCard &hand, Discard &d,int n,Texture &disc_text){
     for (int i=0;i<n;i++){
         hand.deck_vec[i]=Deck[Deck.size()-1];
+        cout << "2663";
         hand.deck_vec[i].texture.loadFromFile(hand.deck_vec[i].path_file_img);
+        cout << "2664";
         hand.avaliable[i]=0;
-        hand.deck_vec[i].TargetCard=4;
+        hand.deck_vec[i].TargetCard = PLAYER_HAND;
         Deck.pop_back();
+        cout << "2667";
         if (Deck.size()==0){
-            Deck.insert(Deck.end(), d.discard.begin(), d.discard.end());
-            disc_text.loadFromFile("project/include/images/backplate.jpg");
+            for (int j=0;j<d.discard.size();j++){
+                Deck.push_back(d.discard[j]);
+            }
+            disc_text.loadFromFile("../include/images/backplate.jpg");
             d.clear();
         }
         
@@ -58,7 +63,7 @@ Card MainDeck::giveCard(Discard &d){
     return card;
 }
 Card MainDeck::del_back(){
-    cout << "Это буффер ";
+    cout << "Удаляется и возвращается карта ";
     Card card(111, 0);
     card = Deck[Deck.size() - 1];
     Deck.pop_back();
