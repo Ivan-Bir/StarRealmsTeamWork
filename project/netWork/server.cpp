@@ -191,6 +191,12 @@ int main(int argc, char* argv[]) {
                 end = sc.now(); 
                 
             }
+            if (active_status == PLAY_CARD){//Отправляем карту 2 игроку на прорисовку
+                packet.clear();
+                packet << PLAY_CARD <<  buff_act.action_from_card.getId() << buff_act.position;//научить понимать какую карту выложил 1 игрок
+                cout<<"GOT CARD";
+                //______________________Посмотреть + разобрать
+            }
 
             if (active_status == END_TURN) {
                 cout << "Поступил END_TURN" << endl;

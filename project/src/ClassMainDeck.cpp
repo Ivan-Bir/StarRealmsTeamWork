@@ -76,7 +76,9 @@ void Discard::get_card(std::vector<sf::RectangleShape> &shape,DeckCard &row, int
     discard_texture=row.deck_vec[card_index].texture;
     row.avaliable[card_index]=1;
     Card empty_card(0,0);
-    shape[card_index].setTexture(empty_card.GetTexture());
+    empty_card.texture.loadFromFile(empty_card.path_file_img);
+    row.deck_vec[card_index].texture=empty_card.texture;
+    shape[card_index].setTexture(&(row.deck_vec[card_index].texture));
     row.deck_vec[card_index]=empty_card;
 }
 void Discard::clear(){

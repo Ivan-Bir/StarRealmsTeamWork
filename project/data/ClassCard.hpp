@@ -143,7 +143,7 @@ public:
                 return;
             }
         }
-        if (given_id==154 && id!=0){
+        if (id!=0){
             cout << "Not Found this Card ID" << endl;
             idCard=-1;
             return;
