@@ -488,6 +488,11 @@ int main(int argc, char* argv[]) {
                                         }
    
                                     }
+                                    for (int i=0;i<EnemyBattleCards.size();i++){
+                                        enemy_battle_cards.deck_vec[i]=empty_card;
+                                    }
+                                    connect_logic_to_graph(EnemyBattleCards,enemy_battle_cards);
+
                                     cout << "Message 449" << endl;
                                     //Deck.giveHand(player_hand, d, 5, discrad_texture);
                                     cout << "Message 451" << endl;
