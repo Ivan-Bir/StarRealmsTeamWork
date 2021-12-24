@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
     RectangleShape enemyOutpost2(Vector2f(168.f, 120.f));
 
     std::vector <RectangleShape> EnemyBattleCards;
-    for (int i=0;i<7;i++){
+    for (int i=0;i<5;i++){
         EnemyBattleCards.push_back(RectangleShape(Vector2f(120.f, 168.f)));
     }
 
@@ -159,8 +159,6 @@ int main(int argc, char* argv[]) {
     EnemyBattleCards[2].move(901, 106);
     EnemyBattleCards[3].move(1036, 106);
     EnemyBattleCards[4].move(1171, 106);
-    EnemyBattleCards[5].move(1306, 106);
-    EnemyBattleCards[6].move(1441, 106);
     for (int i=0;i<EnemyBattleCards.size();i++){
         EnemyBattleCards[i].setFillColor(Color(175, 180, 240));
     }
@@ -241,7 +239,7 @@ int main(int argc, char* argv[]) {
     Text coin_count("",font,30);
     coin_count.setColor(Color::Black);
     coin_count.setStyle(Text::Bold);
-    coin_count.setPosition(320,740);
+    coin_count.setPosition(285,730);
 
     DeckCard player_hand(5,1);
     DeckCard battle_cards(5,1);
