@@ -46,8 +46,8 @@ int main(int argc, char* argv[]) {
     cout << "Карт в деке маркета = " << market_deck.getSize() << endl;
     cout << "Создаю карту" << endl;
 
-    int player_1_hp = 30;
-    int player_2_hp = 30;
+    int player_1_hp = 20;
+    int player_2_hp = 20;
 
     int total_dmg = 0;
     int less_card = 0;
