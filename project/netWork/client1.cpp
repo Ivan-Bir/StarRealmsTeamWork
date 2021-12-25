@@ -222,7 +222,7 @@ int main(int argc, char* argv[]) {
     text_my_hp.setStyle(Text::Bold);
     text_my_hp.setPosition(20.f,520.f);
 
-    Text text_enemy_hp("50", font, 30);
+    Text text_enemy_hp("30", font, 30);
     text_enemy_hp.setColor(Color::Black);
     text_enemy_hp.setStyle(Text::Bold);
     text_enemy_hp.setPosition(20.f,340.f);
@@ -261,7 +261,8 @@ int main(int argc, char* argv[]) {
             int net_status = 0;
             sf::Packet packet;
             int pos = 0;
-            int buff_card_id=0;
+            int buff_card_id = 0;
+            int less_card = 0;
             //DeckCard player_deck(5,1);
 
             // if (client_socket.receive(packet) != sf::Socket::Done) {  //Получен статус на начало игры
@@ -287,7 +288,6 @@ int main(int argc, char* argv[]) {
             window.draw(heroStats);
             window.draw(playerOneDeck);
             window.draw(playerOneDiscard);
-
             window.draw(outpost1);
             window.draw(outpost2);
             draw_rec_vector(BattleCards,window);
@@ -295,13 +295,10 @@ int main(int argc, char* argv[]) {
                 window.draw(ShowBIG);
             }
             window.draw(additionalMarket);
-
             draw_rec_vector(market,window);
         
             window.draw(mainDeck);
-
             window.draw(endTurnButton);
-
             window.draw(enemyOutpost1);
             window.draw(enemyOutpost2);
             draw_rec_vector(EnemyBattleCards,window);
@@ -364,8 +361,8 @@ int main(int argc, char* argv[]) {
             packet >> net_status;
             cout << ST << net_status << endl;
             int coins_per_turn = 0;
-            int my_hp = 50;
-            int enemy_hp = 50;
+            int my_hp = 30;
+            int enemy_hp = 30;
 
             packet.clear();
             packet << NOTHING;
@@ -376,18 +373,14 @@ int main(int argc, char* argv[]) {
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
-                    coins_per_turn = 0;
+                    coins_per_turn = 100;
                     cout << "My turn";
                     endTurn.loadFromFile("../include/images/end_turn_start.jpg");
-                    
-
-                    Deck.giveHand(player_hand,d ,5,discrad_texture);
-                    cout<<"after givehand";
+                    Deck.giveHand(player_hand,d ,(5-less_card),discrad_texture);
+                    less_card = 0;
                     connect_logic_to_graph(PlayerHand, player_hand);
-                    cout<<"after connect_logic ";
                      /*while (1) {
                          cout << "!";
-
                          for (int i = 0; i < 5; i++) {
                              player_hand.deck_vec[i].GetParameters();
                          }
@@ -488,6 +481,11 @@ int main(int argc, char* argv[]) {
                                         }
    
                                     }
+                                    for (int i=0;i<EnemyBattleCards.size();i++){
+                                        enemy_battle_cards.deck_vec[i]=empty_card;
+                                    }
+                                    connect_logic_to_graph(EnemyBattleCards,enemy_battle_cards);
+
                                     cout << "Message 449" << endl;
                                     //Deck.giveHand(player_hand, d, 5, discrad_texture);
                                     cout << "Message 451" << endl;
@@ -685,7 +683,7 @@ int main(int argc, char* argv[]) {
                     }
                     
                     if (net_status == YOUR_TURN) {
-                        packet >> my_hp >> enemy_hp;
+                        packet >> my_hp >> enemy_hp >> less_card;
                         action_status = NOTHING;
                         cout << "Смена хода " << endl;
                         break;

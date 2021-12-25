@@ -46,8 +46,8 @@ int main(int argc, char* argv[]) {
     cout << "Карт в деке маркета = " << market_deck.getSize() << endl;
     cout << "Создаю карту" << endl;
 
-    int player_1_hp = 10;
-    int player_2_hp = 10;
+    int player_1_hp = 30;
+    int player_2_hp = 30;
 
     int total_dmg = 0;
     int less_card = 0;
@@ -236,27 +236,27 @@ int main(int argc, char* argv[]) {
             
             if (turn_log.at(i).action_status == PLAY_CARD) {
                 total_dmg += turn_log.at(i).action_from_card.DamageCard;
-                less_card += turn_log.at(i).action_from_card.TextRule / 10;
+                less_card += turn_log.at(i).action_from_card.TextRule % 10;
                 restore_hp += turn_log.at(i).action_from_card.RestoreHPCard;
                 // Обработчик союзных свойств [если условие срабатывает, то остальные не проверяются]
                 if (is_played_green_race >= 2 && turn_log.at(i).action_from_card.idCard % 100 / 10 == GreenRace) {
                     total_dmg += turn_log.at(i).action_from_card.AlRule.al_DamageCard;
-                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule / 10;
+                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule % 10;
                     restore_hp += turn_log.at(i).action_from_card.AlRule.al_RestoreHPCard;
                 }
                 else if (is_played_red_race >= 2 && turn_log.at(i).action_from_card.idCard % 100 / 10 == RedRace) {
                     total_dmg += turn_log.at(i).action_from_card.AlRule.al_DamageCard;
-                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule / 10;
+                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule % 10;
                     restore_hp += turn_log.at(i).action_from_card.AlRule.al_RestoreHPCard;
                 }
                 else if (is_played_yellow_race >= 2 && turn_log.at(i).action_from_card.idCard % 100 / 10 == YellowRace) {
                     total_dmg += turn_log.at(i).action_from_card.AlRule.al_DamageCard;
-                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule / 10;
+                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule % 10;
                     restore_hp += turn_log.at(i).action_from_card.AlRule.al_RestoreHPCard;
                 }
                 else if (is_played_blue_race >= 2 && turn_log.at(i).action_from_card.idCard % 100 / 10 == BlueRace) {
                     total_dmg += turn_log.at(i).action_from_card.AlRule.al_DamageCard;
-                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule / 10;
+                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule % 10;
                     restore_hp += turn_log.at(i).action_from_card.AlRule.al_RestoreHPCard;
                 }
 
@@ -265,7 +265,7 @@ int main(int argc, char* argv[]) {
                 // Говорим колоде игрока, чтобы карта удалилась 
                 // Todo....
                 total_dmg += turn_log.at(i).action_from_card.UtRule.ut_DamageCard;
-                less_card += turn_log.at(i).action_from_card.UtRule.ut_TextRule / 10;
+                less_card += turn_log.at(i).action_from_card.UtRule.ut_TextRule % 10;
                 restore_hp += turn_log.at(i).action_from_card.UtRule.ut_RestoreHPCard;
             }
         }
@@ -279,7 +279,6 @@ int main(int argc, char* argv[]) {
 
         total_dmg = 0;
         restore_hp = 0;
-        less_card = 0;
         coins_per_turn = 0;
         turn_log.clear();
 
@@ -303,7 +302,8 @@ int main(int argc, char* argv[]) {
         
         // Ход второго игрока
         packet.clear();
-        packet << YOUR_TURN << player_1_hp << player_2_hp;
+        packet << YOUR_TURN << player_2_hp << player_1_hp << less_card;
+        less_card = 0;
         if (player_2.send(packet) != sf::Socket::Done) { 
             cout << " Ne udalosot clienta 2" << endl;
             return 1;
@@ -410,27 +410,27 @@ int main(int argc, char* argv[]) {
             
             if (turn_log.at(i).action_status == PLAY_CARD) {
                 total_dmg += turn_log.at(i).action_from_card.DamageCard;
-                less_card += turn_log.at(i).action_from_card.TextRule / 10;
+                less_card += turn_log.at(i).action_from_card.TextRule % 10;
                 restore_hp += turn_log.at(i).action_from_card.RestoreHPCard;
                 // Обработчик союзных свойств [если условие срабатывает, то остальные не проверяются]
                 if (is_played_green_race >= 2 && turn_log.at(i).action_from_card.idCard % 100 / 10 == GreenRace) {
                     total_dmg += turn_log.at(i).action_from_card.AlRule.al_DamageCard;
-                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule / 10;
+                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule % 10;
                     restore_hp += turn_log.at(i).action_from_card.AlRule.al_RestoreHPCard;
                 }
                 else if (is_played_red_race >= 2 && turn_log.at(i).action_from_card.idCard % 100 / 10 == RedRace) {
                     total_dmg += turn_log.at(i).action_from_card.AlRule.al_DamageCard;
-                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule / 10;
+                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule % 10;
                     restore_hp += turn_log.at(i).action_from_card.AlRule.al_RestoreHPCard;
                 }
                 else if (is_played_yellow_race >= 2 && turn_log.at(i).action_from_card.idCard % 100 / 10 == YellowRace) {
                     total_dmg += turn_log.at(i).action_from_card.AlRule.al_DamageCard;
-                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule / 10;
+                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule % 10;
                     restore_hp += turn_log.at(i).action_from_card.AlRule.al_RestoreHPCard;
                 }
                 else if (is_played_blue_race >= 2 && turn_log.at(i).action_from_card.idCard % 100 / 10 == BlueRace) {
                     total_dmg += turn_log.at(i).action_from_card.AlRule.al_DamageCard;
-                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule / 10;
+                    less_card += turn_log.at(i).action_from_card.AlRule.al_TextRule % 10;
                     restore_hp += turn_log.at(i).action_from_card.AlRule.al_RestoreHPCard;
                 }
 
@@ -439,7 +439,7 @@ int main(int argc, char* argv[]) {
                 // Говорим колоде игрока, чтобы карта удалилась 
                 // Todo....
                 total_dmg += turn_log.at(i).action_from_card.UtRule.ut_DamageCard;
-                less_card += turn_log.at(i).action_from_card.UtRule.ut_TextRule / 10;
+                less_card += turn_log.at(i).action_from_card.UtRule.ut_TextRule % 10;
                 restore_hp += turn_log.at(i).action_from_card.UtRule.ut_RestoreHPCard;
             }
         }
@@ -453,7 +453,6 @@ int main(int argc, char* argv[]) {
 
         total_dmg = 0;
         restore_hp = 0;
-        less_card = 0;
         coins_per_turn = 0;
         turn_log.clear();
 
@@ -476,7 +475,8 @@ int main(int argc, char* argv[]) {
         }
 
         packet.clear();
-        packet << YOUR_TURN << player_2_hp << player_1_hp;
+        packet << YOUR_TURN << player_1_hp << player_2_hp << less_card;
+        less_card = 0;
         if (player_1.send(packet) != sf::Socket::Done) { // Даём разрешение на ход первому игроку
             cout << " Ne udalosot clienta 2" << endl;
             return 1;
