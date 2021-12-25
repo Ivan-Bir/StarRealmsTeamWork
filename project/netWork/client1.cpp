@@ -386,20 +386,11 @@ int main(int argc, char* argv[]) {
                     coins_per_turn = 100;
                     cout << "My turn";
                     endTurn=endTurn_start;
-                    Deck.giveHand(player_hand,d ,(5-less_card),discrad_texture);
+                    Deck.giveHand(player_hand, d, (5 - less_card), discrad_texture);
                     less_card = 0;
                     connect_logic_to_graph(PlayerHand, player_hand);
-                     /*while (1) {
-                         cout << "!";
-                         for (int i = 0; i < 5; i++) {
-                             player_hand.deck_vec[i].GetParameters();
-                         }
-                     }*/
-                    // ##############################################
 
-                    
                     // ###############################################
-
                    
                     while(true) { // Todo Таймер на 45 сек
                         action_status = NOTHING;
@@ -576,7 +567,7 @@ int main(int argc, char* argv[]) {
 
                             while (rec == sf::Socket::NotReady){
                                 rec = client_socket.receive(packet);
-                                sleep(0.1);
+                                usleep(100000);
                             }
                             cout << "Получен конец хода" << endl;
                             if (rec != sf::Socket::Done) {
@@ -612,7 +603,7 @@ int main(int argc, char* argv[]) {
 
                             while (rec == sf::Socket::NotReady){
                                 rec = client_socket.receive(packet);
-                                sleep(0.1);
+                                usleep(100000);
                             }
 
                             if (rec != sf::Socket::Done) {
@@ -734,7 +725,6 @@ int main(int argc, char* argv[]) {
                         }
 
                         if (action_status == BUY_CARD) { // Новую карту в маркете тоже нужно отрисовать
-                            history.setFillColor(Color(0, 255, 0)); // Green
 
                             market_cards.deck_vec[pos] = empty_card;
                             connect_logic_to_graph(market, market_cards);
@@ -742,7 +732,7 @@ int main(int argc, char* argv[]) {
                             rec = client_socket.receive(packet);
                             while (rec==sf::Socket::NotReady){
                                 rec = client_socket.receive(packet);
-                                sleep(0.1);
+                                usleep(100000);
                             }
 
                             if (rec != sf::Socket::Done) {

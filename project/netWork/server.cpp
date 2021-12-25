@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <vector>
 #include <time.h>
+#include <unistd.h>
 
 #include "../data/ClassCard.hpp"
 #include "../data/ClassMainDeck.hpp"
@@ -15,6 +16,7 @@
 #define SER "SERVER: "
 #define MAX_BUFF 1024
 #define DEFAULT_PORT 8080
+#define TURN_TIME 10
 
 using namespace std;
 
@@ -126,22 +128,38 @@ int main(int argc, char* argv[]) {
     int is_played_blue_race;
     cout << "Жду активности от клиентов" << endl;
 
+    chrono::steady_clock sc;
+    std::chrono::_V2::steady_clock::time_point start;
+    std::chrono::_V2::steady_clock::time_point end;
+
     player_1.setBlocking(false);
     player_2.setBlocking(false);
     while (true) {
+        start = sc.now();
         while (player_1_active) {
-            //cout << "Готов обработать Action" << endl;
+            end = sc.now();
+            auto time_span = static_cast<chrono::duration<double>>(end - start);
+            cout<< "Time remain:  "<< TURN_TIME - time_span.count()<< " seconds !!!" << endl;
+            if (TURN_TIME - time_span.count() < 0.0) {
+                cout << "Time is over" << endl;
+                player_1_active = false;
+                player_2_active = true;
+                active_status = END_TURN;
+                break;
+            }
             active_status = NOTHING;
 
             int rec = player_1.receive(packet);
-            if (rec == sf::Socket::NotReady){
-                continue;   
+            if (rec == sf::Socket::NotReady) {
+                //std::this_thread::sleep_for(std::chrono::milliseconds(0.1));
+                usleep(10000);
+                continue;
             }
             if (rec != sf::Socket::Done) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
             }
-            
+
             // Принимаем пакет от активного игрока
             packet >> active_status;
             if (active_status == NOTHING) {
@@ -165,12 +183,10 @@ int main(int argc, char* argv[]) {
                 return 1;
             }
             //cout << "Отправлено на отрисовку" << endl;
-            chrono::steady_clock sc;
-            std::chrono::_V2::steady_clock::time_point start;
-            std::chrono::_V2::steady_clock::time_point end;
+            
             if (active_status == BUY_CARD) {
                 
-                start = sc.now(); 
+                //start = sc.now(); 
                 cout << "##Нужно выложить карту из маркета" << endl;
 
                 if (market_deck.getSize() == 0) {
@@ -204,9 +220,9 @@ int main(int argc, char* argv[]) {
                 player_2_active = true;
                 break;
             }
-            auto time_span = static_cast<chrono::duration<double>>(end - start);
-            cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
-            cout << "nov zahod" << endl;
+            // auto time_span = static_cast<chrono::duration<double>>(end - start);
+            // cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
+            // cout << "nov zahod" << endl;
             // active_status = END_TURN;
         }
 
@@ -317,13 +333,25 @@ int main(int argc, char* argv[]) {
         restore_hp = 0;
         coins_per_turn = 0;
         turn_log.clear();
-        
+
+        start = sc.now();
         while (player_2_active) {
+            end = sc.now();
+            auto time_span = static_cast<chrono::duration<double>>(end - start);
+            cout<< "Time remain:  "<< TURN_TIME - time_span.count()<< " seconds !!!" << endl;
+            if (TURN_TIME - time_span.count() < 0.0) {
+                cout << "Time is over" << endl;
+                player_2_active = false;
+                player_1_active = true;
+                active_status = END_TURN;
+                break;
+            }
            //cout << "Готов обработать Action" << endl;
             active_status = NOTHING;
 
             int rec = player_2.receive(packet);
             if (rec == sf::Socket::NotReady){
+                usleep(10000);
                 continue;   
             }
             if (rec != sf::Socket::Done) {
@@ -387,9 +415,9 @@ int main(int argc, char* argv[]) {
                 player_1_active = true;
                 break;
             }
-            auto time_span = static_cast<chrono::duration<double>>(end - start);
-            cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
-            cout << "nov zahod" << endl;
+            // auto time_span = static_cast<chrono::duration<double>>(end - start);
+            // cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
+            // cout << "nov zahod" << endl;
             // active_status = END_TURN;
         }
 
