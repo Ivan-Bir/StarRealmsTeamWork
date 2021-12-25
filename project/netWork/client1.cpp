@@ -163,8 +163,8 @@ int main(int argc, char* argv[]) {
 
     //enemyImage.setFillColor(Color(175, 180, 240));
     enemyDeck.setFillColor(Color::Transparent);
-    history.setFillColor(Color(175, 180, 240));
-    giveUp.setFillColor(Color::Transparent);
+    //history.setFillColor(Color(175, 180, 240));
+    //giveUp.setFillColor(Color::Transparent);
 
 
 
@@ -179,13 +179,19 @@ int main(int argc, char* argv[]) {
     ShowBIG.move(Vector2f(20.f, 330.f));
     sf::Texture background_first;
     sf::Texture background_sec;
+    sf::Texture button_history;
+    sf::Texture button_giveup;
     sf::Texture coin_texture;
     background_first.loadFromFile("../include/images/background_first.jpg");
     background_sec.loadFromFile("../include/images/background_sec.jpg");
+    button_history.loadFromFile("../include/images/History_button.png");
+    button_giveup.loadFromFile("../include/images/Give_up_button.png");
     coin_texture.loadFromFile("../include/images/coin.png");
-    IntRect backgr_rect(0,0,100000,10000);
+    IntRect backgr_rect(0, 0, 100000, 10000);
     sf::Sprite BackGroundFirst(background_first);
     sf::Sprite BackGroundSec(background_sec);
+    history.setTexture(&button_history);
+    giveUp.setTexture(&button_giveup);
     sf::Sprite coin(coin_texture);
     coin.move(260,720);
     BackGroundFirst.setTextureRect(backgr_rect);
@@ -233,10 +239,10 @@ int main(int argc, char* argv[]) {
     Discard d;
     for (int i=0;i<BattleCards.size();i++){
         battle_cards.deck_vec[i]=empty_card;
-        battle_cards.deck_vec[i]=empty_card;
     }
     connect_logic_to_graph(BattleCards,battle_cards);
     connect_logic_to_graph(PlayerHand,player_hand);
+    connect_logic_to_graph(EnemyBattleCards, enemy_battle_cards);
     MainDeck Deck(0,'m');
     //MainDeck MarketDeck(6,'m');
     //Deck.giveHand(player_hand,d,5,discrad_texture);
