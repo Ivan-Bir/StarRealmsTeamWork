@@ -233,7 +233,7 @@ int main(int argc, char* argv[]) {
     text_my_hp.setPosition(20.f,520.f);
 
     Text text_enemy_hp("", font, 30);
-    text_enemy_hp.setColor(Color::Black);
+    text_enemy_hp.setColor(Color::Red);
     text_enemy_hp.setStyle(Text::Bold);
     text_enemy_hp.setPosition(20.f,340.f);
 

@@ -45,6 +45,7 @@ void MainDeck::giveHand(DeckCard &hand, Discard &d,int n,Texture &disc_text){
             for (int j=0;j<d.discard.size();j++){
                 Deck.push_back(d.discard[j]);
             }
+            this->shuffle_deck();
             disc_text.loadFromFile("../include/images/backplate.jpg");
             d.clear();
         }
