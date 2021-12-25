@@ -122,8 +122,11 @@ int main(int argc, char* argv[]) {
     RectangleShape endTurnButton(Vector2f(130.f, 90.f));
     endTurnButton.move(Vector2f(1380.f, 294.f));
 	endTurnButton.setFillColor(Color::White);
-    sf::Texture endTurn;
-    endTurn.loadFromFile("../include/images/end_turn_start.jpg");
+    sf::Texture endTurn_start;
+    sf::Texture endTurn_end;
+    endTurn_start.loadFromFile("../include/images/end_turn_start.jpg");
+    endTurn_end.loadFromFile("../include/images/end_turn_end.jpg");
+    sf::Texture endTurn = endTurn_start;
     endTurnButton.setTexture(&endTurn);
     RectangleShape Discard_rec(Vector2f(150.f, 210.f));
     Discard_rec.move(1380.f, 400.f);
@@ -224,7 +227,12 @@ int main(int argc, char* argv[]) {
     Text coin_count("",font,30);
     coin_count.setColor(Color::Black);
     coin_count.setStyle(Text::Bold);
-    coin_count.setPosition(285,730);
+    coin_count.setPosition(275,730);
+
+    Text damage("",font,50);
+    damage.setColor(Color::Red);
+    damage.setStyle(Text::Bold);
+
 
     DeckCard player_hand(5,1);
     DeckCard battle_cards(5,1);
@@ -233,10 +241,10 @@ int main(int argc, char* argv[]) {
     Discard d;
     for (int i=0;i<BattleCards.size();i++){
         battle_cards.deck_vec[i]=empty_card;
-        battle_cards.deck_vec[i]=empty_card;
     }
     connect_logic_to_graph(BattleCards,battle_cards);
     connect_logic_to_graph(PlayerHand,player_hand);
+    connect_logic_to_graph(EnemyBattleCards,enemy_battle_cards);
     MainDeck Deck(0,'m');
     //MainDeck MarketDeck(6,'m');
     //Deck.giveHand(player_hand,d,5,discrad_texture);
@@ -369,7 +377,7 @@ int main(int argc, char* argv[]) {
                 case YOUR_TURN:
                     coins_per_turn = 100;
                     cout << "My turn";
-                    endTurn.loadFromFile("../include/images/end_turn_start.jpg");
+                    endTurn=endTurn_start;
                     Deck.giveHand(player_hand,d ,(5-less_card),discrad_texture);
                     less_card = 0;
                     connect_logic_to_graph(PlayerHand, player_hand);
@@ -456,12 +464,11 @@ int main(int argc, char* argv[]) {
                                 //EndTurn
                                 if (endTurnButton.getGlobalBounds().contains(   
                                         window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
-                                    endTurn.loadFromFile("../include/images/end_turn_end.jpg");
+                                    endTurn = endTurn_end;
                                     
                                     packet.clear();
                                     action_status = END_TURN;
                                     packet << action_status;
-                                    endTurnButton.setFillColor(Color(210, 0, 0));
                                     cout << "Message 436" << endl;
                                     for (int i = 0; i < PlayerHand.size(); i++){
                                         if (player_hand.deck_vec[i].getId() != 0){
