@@ -29,12 +29,6 @@ int main(int argc, char* argv[]) {
     cout << CL << "Сокет создан!" << endl;
     sf::Time timeout = sf::seconds(45.f);
     sf::Socket::Status status = client_socket.connect("127.0.0.1", DEFAULT_PORT, timeout);
-    /*if (status != sf::Socket::Done) {
-        cout << CL << "Произошла ошибка соединения с сервером" << endl;
-    } else {
-        cout << CL << "Подключился к серверу " << client_socket.getRemoteAddress()
-                << " На порту " << client_socket.getRemotePort() << endl;
-    }*/
     //___________________________________________________________________________________________________________________________________________
     // Объявления переменных для графики
     Card empty_card(0);
@@ -42,7 +36,7 @@ int main(int argc, char* argv[]) {
     sf::Texture empty_texture;
     empty_texture.loadFromFile("../include/images/0.jpg");
     settings.antialiasingLevel = 8;
-	RenderWindow window(VideoMode(1600, 900), "SFML Works!",sf::Style::Default, settings);
+	RenderWindow window(VideoMode(1600, 900), "Star Realms", sf::Style::Default, settings);
 
 	RectangleShape heroImage(Vector2f(220.f, 308.f));
     RectangleShape heroStats(Vector2f(320.f, 160.f));
