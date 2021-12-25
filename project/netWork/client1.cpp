@@ -34,6 +34,7 @@ int main(int argc, char* argv[]) {
     Card empty_card(0);
     sf::ContextSettings settings;
     sf::Texture empty_texture;
+    Texture save;
     empty_texture.loadFromFile("../include/images/0.jpg");
     settings.antialiasingLevel = 8;
 	RenderWindow window(VideoMode(1600, 900), "Star Realms", sf::Style::Default, settings);
@@ -139,7 +140,6 @@ int main(int argc, char* argv[]) {
         EnemyBattleCards.push_back(RectangleShape(Vector2f(120.f, 168.f)));
     }
 
-
     enemyOutpost1.move(265, 154);
     enemyOutpost2.move(448, 154);
     EnemyBattleCards[0].move(631, 106);
@@ -180,6 +180,13 @@ int main(int argc, char* argv[]) {
     sf::Sprite ShowBIG(empty_texture);
     ShowBIG.setScale(0.7,0.7);
     ShowBIG.move(Vector2f(20.f, 330.f));
+
+    Texture cross;
+    cross.loadFromFile("../include/images/cross.png");
+    sf::Sprite Cross(cross);
+    Cross.setScale(0.5,0.5);
+    Cross.move(Vector2f(20.f, 330.f));
+
     sf::Texture background_first;
     sf::Texture background_sec;
     sf::Texture button_history;
@@ -225,7 +232,7 @@ int main(int argc, char* argv[]) {
     text_my_hp.setStyle(Text::Bold);
     text_my_hp.setPosition(20.f,520.f);
 
-    Text text_enemy_hp("30", font, 30);
+    Text text_enemy_hp("", font, 30);
     text_enemy_hp.setColor(Color::Black);
     text_enemy_hp.setStyle(Text::Bold);
     text_enemy_hp.setPosition(20.f,340.f);
@@ -252,6 +259,7 @@ int main(int argc, char* argv[]) {
     connect_logic_to_graph(PlayerHand,player_hand);
     connect_logic_to_graph(EnemyBattleCards, enemy_battle_cards);
     MainDeck Deck(0,'m');
+    Deck.shuffle_deck();
     //MainDeck MarketDeck(6,'m');
     //Deck.giveHand(player_hand,d,5,discrad_texture);
     //MarketDeck.giveHand(market_cards,d,5,discrad_texture);
@@ -383,6 +391,7 @@ int main(int argc, char* argv[]) {
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
+                {   swap(hero_image,enemy_image);
                     coins_per_turn = 100;
                     cout << "My turn";
                     endTurn=endTurn_start;
@@ -411,13 +420,18 @@ int main(int argc, char* argv[]) {
                         window.draw(coin);
                         draw_rec_vector(BattleCards,window);
                         text_my_hp.setString("HP:"+to_string(my_hp));
+                        text_enemy_hp.setString("HP:"+to_string(enemy_hp));
                         coin_count.setString(to_string(coins_per_turn));
                         window.draw(text_my_hp);
                         window.draw(coin_count);
                         window.draw(text_enemy_hp);
                         window.draw(text);
-                        if (flag_draw){
+                        if (flag_draw == 1){
                             window.draw(ShowBIG);
+                        }
+                        if (flag_draw == 2){
+                            window.draw(ShowBIG);
+                            window.draw(Cross);
                         }
                         draw_rec_vector(market,window);
                     
@@ -462,7 +476,7 @@ int main(int argc, char* argv[]) {
                                 //EndTurn
                                 if (endTurnButton.getGlobalBounds().contains(   
                                         window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
-                                    endTurn = endTurn_end;
+                                    
                                     
                                     packet.clear();
                                     action_status = END_TURN;
@@ -538,6 +552,21 @@ int main(int argc, char* argv[]) {
                                 if (pos!=-1) {
                                     flag_draw=1;
                                     ShowBIG.setTexture(*(enemy_battle_cards.deck_vec[pos].GetTexture()));
+                                }
+                            }
+                            if (event.mouseButton.button == sf::Mouse::Right){
+                                pos=check_if_clicked(PlayerHand,event,player_hand,window);
+                                if (pos!=-1){
+                                    save=*PlayerHand[pos].getTexture();
+                                    ShowBIG.setTexture(save);
+                                    buff_card = return_card(player_hand.deck_vec[pos].getId());
+                                    packet.clear();
+                                    action_status = UTIL_CARD;
+                                    packet << UTIL_CARD <<  player_hand.deck_vec[pos].getId() << pos;
+                                    player_hand.deck_vec[pos]=empty_card;
+                                    connect_logic_to_graph(PlayerHand,player_hand);
+                                    flag_draw = 2;
+                                    break;
                                 }
                             }
                         }
@@ -632,8 +661,11 @@ int main(int argc, char* argv[]) {
                         action_status = NOTHING;
                     }
                     break; //Выход из кейса YOUR_TURN
+                }
 
                 case WAIT: 
+                {   swap(hero_image,enemy_image);
+                    endTurn = endTurn_end;
                     cout << "wait" << endl;
                     //window.clear(Color::Blue);
                     //connect_logic_to_graph(PlayerHand,player_hand);
@@ -648,8 +680,12 @@ int main(int argc, char* argv[]) {
                     //window.draw(outpost1);
                     //window.draw(outpost2);
                     draw_rec_vector(BattleCards,window);
-                    if (flag_draw){
+                    if (flag_draw == 1 ){
                         window.draw(ShowBIG);
+                    }
+                    if (flag_draw == 2){
+                        window.draw(ShowBIG);
+                        window.draw(Cross);
                     }
                     window.draw(additionalMarket);
                     draw_rec_vector(market,window);
@@ -664,11 +700,14 @@ int main(int argc, char* argv[]) {
                     window.draw(history);
                     window.draw(giveUp);
                     window.draw(Discard_rec);
-
+                    text_my_hp.setString("HP:"+to_string(my_hp));
+                    text_enemy_hp.setString("HP:"+to_string(enemy_hp));
+                    coin_count.setString(to_string(coins_per_turn));
                     window.draw(coin);
                     window.draw(text);
                     window.draw(text_my_hp);
                     window.draw(text_enemy_hp);
+                    window.draw(coin_count);
                     window.display();
 
                     rec = client_socket.receive(packet);
@@ -686,10 +725,10 @@ int main(int argc, char* argv[]) {
                     packet >> net_status;
                     cout << "Получено: " << ST << net_status << endl;
 
-                    if (net_status != YOUR_TURN && net_status != OPPONENT_TURN) {
+                    /*if (net_status != YOUR_TURN && net_status != OPPONENT_TURN) {
                         //cout << "Бред получили";
                         return 1;
-                    }
+                    }*/
                     
                     if (net_status == YOUR_TURN) {
                         packet >> my_hp >> enemy_hp >> less_card;
@@ -722,6 +761,10 @@ int main(int argc, char* argv[]) {
                         }
 
                         if (action_status == UTIL_CARD) {
+                            save = buff_card.texture;
+                            ShowBIG.setTexture(save);
+                            flag_draw = 2 ;
+
                         }
 
                         if (action_status == BUY_CARD) { // Новую карту в маркете тоже нужно отрисовать
@@ -757,9 +800,48 @@ int main(int argc, char* argv[]) {
                         net_status = WAIT;
                     }
                     break;
+                }
 
-                case WIN: cout << "CONGRATULATIONS!" << endl; return 1;
-                case LOSE: cout << "Maybe next time..." << endl; return 2;
+                case WIN: 
+                {   
+                    cout << "CONGRATULATIONS!" << endl;  
+                    Sprite victory;
+                    Texture vict;
+                    vict.loadFromFile("../include/images/victory_screen.png");
+                    victory.setTexture(vict);
+                    victory.setPosition(window.getPosition().x+100,window.getPosition().y);
+                    window.draw(victory);
+                    window.display();
+                    while (window.pollEvent(event)){
+                        if (event.type == Event::Closed)
+                            window.close();
+                        else{
+                            continue;
+                        }
+                        
+                    }
+                    break;
+                }
+                case LOSE:
+                {
+                    cout << "Maybe next time..." << endl; 
+                    Sprite defeat;
+                    Texture def;
+                    def.loadFromFile("../include/images/defeat_screen.png");
+                    defeat.setPosition(window.getPosition().x+300,window.getPosition().y);
+                    defeat.setTexture(def);
+                    window.draw(defeat);
+                    window.display();
+                    while (window.pollEvent(event)){
+                        if (event.type == Event::Closed)
+                            window.close();
+                        else{
+                            continue;
+                        }
+                    }
+                   
+
+                }
                 default: cout << "DEFAULT" << endl; break;
                 }
                 cout << net_status << endl;

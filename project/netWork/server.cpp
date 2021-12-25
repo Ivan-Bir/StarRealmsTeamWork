@@ -48,8 +48,8 @@ int main(int argc, char* argv[]) {
     cout << "Карт в деке маркета = " << market_deck.getSize() << endl;
     cout << "Создаю карту" << endl;
 
-    int player_1_hp = 30;
-    int player_2_hp = 30;
+    int player_1_hp = 20;
+    int player_2_hp = 20;
 
     int total_dmg = 0;
     int less_card = 0;
@@ -140,13 +140,13 @@ int main(int argc, char* argv[]) {
             end = sc.now();
             auto time_span = static_cast<chrono::duration<double>>(end - start);
             cout<< "Time remain:  "<< TURN_TIME - time_span.count()<< " seconds !!!" << endl;
-            if (TURN_TIME - time_span.count() < 0.0) {
+            /*if (TURN_TIME - time_span.count() < 0.0) {
                 cout << "Time is over" << endl;
                 player_1_active = false;
                 player_2_active = true;
                 active_status = END_TURN;
                 break;
-            }
+            }*/
             active_status = NOTHING;
 
             int rec = player_1.receive(packet);
@@ -339,13 +339,13 @@ int main(int argc, char* argv[]) {
             end = sc.now();
             auto time_span = static_cast<chrono::duration<double>>(end - start);
             cout<< "Time remain:  "<< TURN_TIME - time_span.count()<< " seconds !!!" << endl;
-            if (TURN_TIME - time_span.count() < 0.0) {
+           /* if (TURN_TIME - time_span.count() < 0.0) {
                 cout << "Time is over" << endl;
                 player_2_active = false;
                 player_1_active = true;
                 active_status = END_TURN;
                 break;
-            }
+            }*/
            //cout << "Готов обработать Action" << endl;
             active_status = NOTHING;
 
