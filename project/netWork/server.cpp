@@ -277,10 +277,7 @@ int main(int argc, char* argv[]) {
         cout << " ++ Восстановлено первым за ход = " << restore_hp << endl;
         cout << " << На " << less_card  << " карт меньше в раздаче в следующем ходу" << endl;
 
-        total_dmg = 0;
-        restore_hp = 0;
-        coins_per_turn = 0;
-        turn_log.clear();
+        
 
         if (player_2_hp <= 0) {
             packet.clear();
@@ -309,6 +306,18 @@ int main(int argc, char* argv[]) {
             return 1;
         }
 
+        packet.clear();
+        packet << WAIT << player_1_hp << player_2_hp << restore_hp << total_dmg;
+        if (player_1.send(packet) != sf::Socket::Done) { 
+            cout << " Ne udalosot clienta 2" << endl;
+            return 1;
+        }
+
+        total_dmg = 0;
+        restore_hp = 0;
+        coins_per_turn = 0;
+        turn_log.clear();
+        
         while (player_2_active) {
            //cout << "Готов обработать Action" << endl;
             active_status = NOTHING;
@@ -451,10 +460,10 @@ int main(int argc, char* argv[]) {
         cout << " ++ Восстановлено первым за ход = " << restore_hp << endl;
         cout << " << На " << less_card  << " карт меньше в раздаче в следующем ходу" << endl;
 
-        total_dmg = 0;
-        restore_hp = 0;
-        coins_per_turn = 0;
-        turn_log.clear();
+        // total_dmg = 0;
+        // restore_hp = 0;
+        // coins_per_turn = 0;
+        // turn_log.clear();
 
         if (player_1_hp <= 0) {
             packet.clear();
@@ -481,6 +490,18 @@ int main(int argc, char* argv[]) {
             cout << " Ne udalosot clienta 2" << endl;
             return 1;
         }
+
+        packet.clear();
+        packet << WAIT << player_2_hp << player_1_hp << restore_hp << total_dmg;
+        if (player_2.send(packet) != sf::Socket::Done) { 
+            cout << " Ne udalosot clienta 2" << endl;
+            return 1;
+        }
+        
+        total_dmg = 0;
+        restore_hp = 0;
+        coins_per_turn = 0;
+        turn_log.clear();
     }
 
     //Желательно бы иметь возможность выводить весь баттл лог, для отладок

@@ -371,6 +371,8 @@ int main(int argc, char* argv[]) {
             int coins_per_turn = 0;
             int my_hp = 30;
             int enemy_hp = 30;
+            int heal_per_turn = 0;
+            int dmg_per_turn = 0;
 
             packet.clear();
             packet << NOTHING;
@@ -466,7 +468,6 @@ int main(int argc, char* argv[]) {
                                     move_card(PlayerHand, player_hand, BattleCards, battle_cards, pos);
                                     break;
                                 }
-                                cout << "Message 323f23" << endl;
                                 //EndTurn
                                 if (endTurnButton.getGlobalBounds().contains(   
                                         window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
@@ -475,13 +476,11 @@ int main(int argc, char* argv[]) {
                                     packet.clear();
                                     action_status = END_TURN;
                                     packet << action_status;
-                                    cout << "Message 436" << endl;
                                     for (int i = 0; i < PlayerHand.size(); i++){
                                         if (player_hand.deck_vec[i].getId() != 0){
                                             d.get_card(PlayerHand,player_hand,i,discrad_texture);
                                         }
                                     }
-                                    cout << "Message 442" << endl;
                                     for (int i = 0; i < BattleCards.size(); i++){
                                         if (battle_cards.deck_vec[i].getId() != 0){
                                             d.get_card(BattleCards,battle_cards,i,discrad_texture);
@@ -493,11 +492,8 @@ int main(int argc, char* argv[]) {
                                     }
                                     connect_logic_to_graph(EnemyBattleCards,enemy_battle_cards);
 
-                                    cout << "Message 449" << endl;
-                                    //Deck.giveHand(player_hand, d, 5, discrad_texture);
-                                    cout << "Message 451" << endl;
+
                                     connect_logic_to_graph(PlayerHand,player_hand);
-                                    cout << "Message 453" << endl;
                                     break;
                                 }
 
@@ -575,7 +571,22 @@ int main(int argc, char* argv[]) {
                         cout << "Message 1" << endl;
 
                         if (action_status == END_TURN) {
-                            net_status = WAIT;
+                            //net_status = WAIT;
+                            rec = client_socket.receive(packet);
+
+                            while (rec == sf::Socket::NotReady){
+                                rec = client_socket.receive(packet);
+                                sleep(0.1);
+                            }
+                            cout << "Получен конец хода" << endl;
+                            if (rec != sf::Socket::Done) {
+                                cout << " Ne udalos1" << endl;
+                                return 1;
+                            }
+                            packet >> net_status >> my_hp >> enemy_hp >> heal_per_turn >> dmg_per_turn;
+                            if (net_status == WAIT) {
+                                cout << "orghu4hihnu4bh4u4o5h38kchg45hg4h4o4jhoj5ohj4o" << endl;
+                            }
                             action_status = NOTHING;
                             break;
                         }
@@ -685,7 +696,7 @@ int main(int argc, char* argv[]) {
                     cout << "Получено: " << ST << net_status << endl;
 
                     if (net_status != YOUR_TURN && net_status != OPPONENT_TURN) {
-                        cout << "Бред получили";
+                        //cout << "Бред получили";
                         return 1;
                     }
                     
