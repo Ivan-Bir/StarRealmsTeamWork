@@ -47,7 +47,7 @@ public:
         }
         else{
            // int c=0;
-            for (int i = 121; i < 155; i++){
+            for (int i = 121; i < 158; i++){
                 Card card(i);
                 if (card.getId()!=-1){
                     Deck.push_back(card);

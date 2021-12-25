@@ -15,7 +15,7 @@ void MainDeck::append(Card one_card) {
 }
 
 void MainDeck::update_deck() {
-    for (int i = 121; i < 155; i++){
+    for (int i = 121; i < 158; i++){
         Card card(i);
         if (card.getId() != -1) {
             this -> append(card);
