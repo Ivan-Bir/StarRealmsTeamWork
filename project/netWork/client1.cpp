@@ -208,24 +208,34 @@ int main(int argc, char* argv[]) {
     text.setColor(Color::Black);
     text.setStyle(Text::Bold);
     text.setPosition(1410.f,320.f);
-    Text text_my_hp("", font, 30);
+    Text text_my_hp("", font, 60);
     text_my_hp.setColor(Color::Green);
     text_my_hp.setStyle(Text::Bold);
     text_my_hp.setPosition(20.f,520.f);
 
-    Text text_enemy_hp("", font, 30);
+    Text text_enemy_hp("", font, 60); 
     text_enemy_hp.setColor(Color::Red);
     text_enemy_hp.setStyle(Text::Bold);
     text_enemy_hp.setPosition(20.f,340.f);
 
-    Text coin_count("",font,30);
+    Text coin_count("", font, 30);
     coin_count.setColor(Color::Black);
     coin_count.setStyle(Text::Bold);
-    coin_count.setPosition(275,730);
+    coin_count.setPosition(275, 730);
 
     Text damage("",font,50);
     damage.setColor(Color::Red);
     damage.setStyle(Text::Bold);
+
+    Text text_heal_per_turn("", font, 100);
+    text_heal_per_turn.setColor(Color::Green);
+    text_heal_per_turn.setStyle(Text::Bold);
+    text_heal_per_turn.setPosition(70, 500);
+
+    Text text_dmg_per_turn("", font, 100);
+    text_dmg_per_turn.setColor(Color::Red);
+    text_dmg_per_turn.setStyle(Text::Bold);
+    text_dmg_per_turn.setPosition(70, 70);
 
 
     DeckCard player_hand(5,1);
@@ -233,8 +243,8 @@ int main(int argc, char* argv[]) {
     DeckCard market_cards(5,1);
     DeckCard enemy_battle_cards(5,1);
     Discard d;
-    for (int i=0;i<BattleCards.size();i++){
-        battle_cards.deck_vec[i]=empty_card;
+    for (int i = 0; i < BattleCards.size(); i++){
+        battle_cards.deck_vec[i] = empty_card;
     }
     connect_logic_to_graph(BattleCards,battle_cards);
     connect_logic_to_graph(PlayerHand,player_hand);
@@ -270,6 +280,8 @@ int main(int argc, char* argv[]) {
             BattleCards,ShowBIG,market,mainDeck,endTurnButton,EnemyBattleCards,
             enemyImage,enemyDeck,history,giveUp,Discard_rec,text,
             text_my_hp,text_enemy_hp,heroImage,heroStats,flag_draw,mainDeck);
+            // window.draw(text_heal_per_turn);
+            // window.draw(text_dmg_per_turn);
             //________________________________________________________
             rec = client_socket.receive(packet);
             if (rec != sf::Socket::Done) {
@@ -333,7 +345,7 @@ int main(int argc, char* argv[]) {
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
-                {   coins_per_turn = 0;
+                {   coins_per_turn = 100;
                     cout << "My turn";
                     endTurn = endTurn_start;
                     Deck.giveHand(player_hand, d, (5 - less_card), discrad_texture);
@@ -389,10 +401,19 @@ int main(int argc, char* argv[]) {
                         draw_rec_vector(BattleCards,window);
                         text_my_hp.setString("HP:"+to_string(my_hp));
                         text_enemy_hp.setString("HP:"+to_string(enemy_hp));
+                        text_dmg_per_turn.setString("-"+to_string(dmg_per_turn));
+                        text_heal_per_turn.setString("-"+to_string(heal_per_turn));
                         coin_count.setString(to_string(coins_per_turn));
                         window.draw(text_my_hp);
-                        window.draw(coin_count);
                         window.draw(text_enemy_hp);
+                        if (heal_per_turn != 0) {
+                            window.draw(text_heal_per_turn);
+                        }
+                        if (dmg_per_turn != 0) {
+                            window.draw(text_dmg_per_turn);
+                        }
+                        window.draw(coin_count);
+                        
                         window.draw(text);
                         if (flag_draw == 1){
                             window.draw(ShowBIG);
@@ -670,6 +691,17 @@ int main(int argc, char* argv[]) {
                     window.draw(text);
                     window.draw(text_my_hp);
                     window.draw(text_enemy_hp);
+
+                    text_dmg_per_turn.setString("-"+to_string(dmg_per_turn));
+                    text_heal_per_turn.setString("+"+to_string(heal_per_turn));
+
+                    coin_count.setString(to_string(coins_per_turn));
+                    if (heal_per_turn != 0) {
+                        window.draw(text_heal_per_turn);
+                    }
+                    if (dmg_per_turn != 0) {
+                        window.draw(text_dmg_per_turn);
+                    }
                     window.draw(coin_count);
                     window.display();
 
