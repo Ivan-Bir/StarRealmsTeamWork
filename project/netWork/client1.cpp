@@ -211,45 +211,44 @@ int main(int argc, char* argv[]) {
     Text text_my_hp("", font, 60);
     text_my_hp.setColor(Color::Green);
     text_my_hp.setStyle(Text::Bold);
-    text_my_hp.setPosition(20.f,520.f);
+    text_my_hp.setPosition(20.f,500.f);
 
     Text text_enemy_hp("", font, 60); 
     text_enemy_hp.setColor(Color::Red);
     text_enemy_hp.setStyle(Text::Bold);
-    text_enemy_hp.setPosition(20.f,340.f);
+    text_enemy_hp.setPosition(20.f,320.f);
 
     Text coin_count("", font, 30);
     coin_count.setColor(Color::Black);
     coin_count.setStyle(Text::Bold);
     coin_count.setPosition(275, 730);
 
-    Text damage("",font,50);
+    Text damage("", font, 50);
     damage.setColor(Color::Red);
     damage.setStyle(Text::Bold);
-
-    Text text_heal_per_turn("", font, 100);
-    text_heal_per_turn.setColor(Color::Green);
-    text_heal_per_turn.setStyle(Text::Bold);
-    text_heal_per_turn.setPosition(70, 500);
 
     Text text_dmg_per_turn("", font, 100);
     text_dmg_per_turn.setColor(Color::Red);
     text_dmg_per_turn.setStyle(Text::Bold);
-    text_dmg_per_turn.setPosition(70, 70);
+    text_dmg_per_turn.setPosition(80, 85);
 
+    Text text_heal_per_turn("", font, 100);
+    text_heal_per_turn.setColor(Color::Green);
+    text_heal_per_turn.setStyle(Text::Bold);
+    text_heal_per_turn.setPosition(75, 666);
 
-    DeckCard player_hand(5,1);
-    DeckCard battle_cards(5,1);
-    DeckCard market_cards(5,1);
-    DeckCard enemy_battle_cards(5,1);
+    DeckCard player_hand(5, 1);
+    DeckCard battle_cards(5, 1);
+    DeckCard market_cards(5, 1);
+    DeckCard enemy_battle_cards(5, 1);
     Discard d;
     for (int i = 0; i < BattleCards.size(); i++){
         battle_cards.deck_vec[i] = empty_card;
     }
-    connect_logic_to_graph(BattleCards,battle_cards);
-    connect_logic_to_graph(PlayerHand,player_hand);
+    connect_logic_to_graph(BattleCards, battle_cards);
+    connect_logic_to_graph(PlayerHand, player_hand);
     connect_logic_to_graph(EnemyBattleCards, enemy_battle_cards);
-    MainDeck Deck(0,'m');
+    MainDeck Deck(0, 'm');
     Deck.shuffle_deck();
 
     int flag_draw = 0;
@@ -264,7 +263,7 @@ int main(int argc, char* argv[]) {
             int buff_card_id = 0;
             int less_card = 0;
   
-            int rec=0;
+            int rec = 0;
             for (int i = 0; i < 5; i++){ // Получаем 5 карт в маркет
                 client_socket.receive(packet);
                 packet >> net_status >> buff_card_id;
@@ -280,8 +279,6 @@ int main(int argc, char* argv[]) {
             BattleCards,ShowBIG,market,mainDeck,endTurnButton,EnemyBattleCards,
             enemyImage,enemyDeck,history,giveUp,Discard_rec,text,
             text_my_hp,text_enemy_hp,heroImage,heroStats,flag_draw,mainDeck);
-            // window.draw(text_heal_per_turn);
-            // window.draw(text_dmg_per_turn);
             //________________________________________________________
             rec = client_socket.receive(packet);
             if (rec != sf::Socket::Done) {
@@ -329,8 +326,8 @@ int main(int argc, char* argv[]) {
                 swap(hero_image, enemy_image);
             }
             int coins_per_turn = 0;
-            int my_hp = 30;
-            int enemy_hp = 30;
+            int my_hp = 50;
+            int enemy_hp = 50;
             int heal_per_turn = 0;
             int dmg_per_turn = 0;
 
@@ -446,7 +443,6 @@ int main(int argc, char* argv[]) {
                             return 1;      
                         }
                             
-
                         if (event.type == Event::MouseButtonPressed) {
                             
                             ShowBIG.setTexture(empty_texture);
@@ -724,6 +720,8 @@ int main(int argc, char* argv[]) {
                         packet >> my_hp >> enemy_hp >> less_card;
                         action_status = NOTHING;
                         cout << "Смена хода " << endl;
+                        heal_per_turn = 0;
+                        dmg_per_turn = 0;
                         start = scc.now();
                         break;
                     }
