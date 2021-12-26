@@ -15,9 +15,9 @@
 #define ST "STATUS: "
 #define MAX_BUFF 1024
 #define DEFAULT_PORT 8080
+#define TURN_TIME 100
 
 using namespace std;
-
 
 
 
@@ -376,6 +376,9 @@ int main(int argc, char* argv[]) {
 
             packet >> net_status;
             cout << ST << net_status << endl;
+            if (net_status == WAIT) {
+                swap(hero_image, enemy_image);
+            }
             int coins_per_turn = 0;
             int my_hp = 30;
             int enemy_hp = 30;
@@ -388,13 +391,14 @@ int main(int argc, char* argv[]) {
 
             chrono::steady_clock scc;
             std::chrono::_V2::steady_clock::time_point start; 
+            std::chrono::_V2::steady_clock::time_point end;
+            start = scc.now();
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
-                {   swap(hero_image,enemy_image);
-                    coins_per_turn = 100;
+                {   coins_per_turn = 100;
                     cout << "My turn";
-                    endTurn=endTurn_start;
+                    endTurn = endTurn_start;
                     Deck.giveHand(player_hand, d, (5 - less_card), discrad_texture);
                     less_card = 0;
                     connect_logic_to_graph(PlayerHand, player_hand);
@@ -403,12 +407,39 @@ int main(int argc, char* argv[]) {
                    
                     while(true) { // Todo Таймер на 45 сек
                         action_status = NOTHING;
-                        while (window.pollEvent(event)){
-                            if (event.type==Event::MouseMoved){
+                        end = scc.now();
+                        auto time_span = static_cast<chrono::duration<double>> (end - start);
+                        cout << "time_span = " << time_span.count() << endl;
+                        // Тут надо написать вывод времени на экран целых секунд (int) time_span.count();
+                        bool time_is_over = false;
+                        if (TURN_TIME - time_span.count() < 0.0) {
+                            packet.clear();
+                            action_status = END_TURN;
+                            packet << action_status;
+                            for (int i = 0; i < PlayerHand.size(); i++){
+                                if (player_hand.deck_vec[i].getId() != 0){
+                                    d.get_card(PlayerHand,player_hand,i,discrad_texture);
+                                }
+                            }
+                            for (int i = 0; i < BattleCards.size(); i++){
+                                if (battle_cards.deck_vec[i].getId() != 0){
+                                    d.get_card(BattleCards,battle_cards,i,discrad_texture);
+                                }
+
+                            }
+                            for (int i=0;i<EnemyBattleCards.size();i++){
+                                enemy_battle_cards.deck_vec[i]=empty_card;
+                            }
+                            connect_logic_to_graph(EnemyBattleCards,enemy_battle_cards);
+                            connect_logic_to_graph(PlayerHand,player_hand);
+                            time_is_over = true;
+
+                        }
+                        while (window.pollEvent(event) && time_is_over == false) {
+                            if (event.type == Event::MouseMoved){
                                 continue;
                             }
 
-                        
                         window.clear(Color::White);
                         window.draw(BackGroundFirst);
                         window.draw(heroImage);
@@ -451,17 +482,17 @@ int main(int argc, char* argv[]) {
                         if (event.type == Event::Closed)
                             window.close();
 
-                        if (event.type == Event::MouseButtonPressed){
+                        if (event.type == Event::MouseButtonPressed) {
                             
                             ShowBIG.setTexture(empty_texture);
                             IntRect sprite_rect(0, 0, 300, 420);
                             ShowBIG.setTextureRect(sprite_rect);
                             flag_draw = 0;
                             
-                            if (event.mouseButton.button == sf::Mouse::Left) { // Розыгрыш карты
+                            if (event.mouseButton.button == sf::Mouse::Left) {
                                 int pos = check_if_clicked(PlayerHand, event, player_hand, window);
                                 cout << "Message LKM" << endl;
-                                if (pos!=-1) {
+                                if (pos != -1) {
 
                                     action_status = PLAY_CARD;
                                     packet.clear();
@@ -525,6 +556,15 @@ int main(int argc, char* argv[]) {
                                         break;
                                     } else { cout << "Not enought money " << endl; }
                                 }
+
+                                // Give up
+                                if (giveUp.getGlobalBounds().contains(   
+                                        window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                                    packet.clear();
+                                    action_status = GIVE_UP;
+                                    packet << action_status;
+                                    break;
+                                }
                             }
                             // auto end = scc.now();
                             // auto time_span = static_cast<chrono::duration<double>>(end - start);
@@ -554,7 +594,8 @@ int main(int argc, char* argv[]) {
                                     ShowBIG.setTexture(*(enemy_battle_cards.deck_vec[pos].GetTexture()));
                                 }
                             }
-                            if (event.mouseButton.button == sf::Mouse::Right){
+                            // Util Card
+                            if (event.mouseButton.button == sf::Mouse::Right) {
                                 pos=check_if_clicked(PlayerHand,event,player_hand,window);
                                 if (pos!=-1){
                                     save=*PlayerHand[pos].getTexture();
@@ -587,14 +628,14 @@ int main(int argc, char* argv[]) {
                         }
 
     
-                        start = scc.now();
+                        //start = scc.now();
                         cout << "Message 1" << endl;
 
-                        if (action_status == END_TURN) {
+                        if (action_status == END_TURN || action_status == GIVE_UP) {
                             //net_status = WAIT;
                             rec = client_socket.receive(packet);
 
-                            while (rec == sf::Socket::NotReady){
+                            while (rec == sf::Socket::NotReady) {
                                 rec = client_socket.receive(packet);
                                 usleep(100000);
                             }
@@ -654,9 +695,9 @@ int main(int argc, char* argv[]) {
                         }
                        
 
-                        auto end = scc.now(); 
-                        auto time_span = static_cast<chrono::duration<double>>(end - start);
-                        cout<< "Main loop took: "<< time_span.count()<<" seconds !!!" << endl;
+                        // auto end = scc.now(); 
+                        // auto time_span = static_cast<chrono::duration<double>>(end - start);
+                        // cout<< "Main loop took: "<< time_span.count()<<" seconds !!!" << endl;
 
                         action_status = NOTHING;
                     }
@@ -664,7 +705,7 @@ int main(int argc, char* argv[]) {
                 }
 
                 case WAIT: 
-                {   swap(hero_image,enemy_image);
+                {   
                     endTurn = endTurn_end;
                     cout << "wait" << endl;
                     //window.clear(Color::Blue);
@@ -734,6 +775,7 @@ int main(int argc, char* argv[]) {
                         packet >> my_hp >> enemy_hp >> less_card;
                         action_status = NOTHING;
                         cout << "Смена хода " << endl;
+                        start = scc.now();
                         break;
                     }
 
@@ -844,7 +886,7 @@ int main(int argc, char* argv[]) {
                 }
                 default: cout << "DEFAULT" << endl; break;
                 }
-                cout << net_status << endl;
+                cout << ST << net_status << endl;
             }
 
     return 0;
