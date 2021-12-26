@@ -16,7 +16,6 @@
 #define SER "SERVER: "
 #define MAX_BUFF 1024
 #define DEFAULT_PORT 8080
-#define TURN_TIME 10
 
 using namespace std;
 
@@ -128,25 +127,10 @@ int main(int argc, char* argv[]) {
     int is_played_blue_race;
     cout << "Жду активности от клиентов" << endl;
 
-    // chrono::steady_clock sc;
-    // std::chrono::_V2::steady_clock::time_point start;
-    // std::chrono::_V2::steady_clock::time_point end;
-
     player_1.setBlocking(false);
     player_2.setBlocking(false);
     while (true) {
-        //start = sc.now();
         while (player_1_active) {
-            // end = sc.now();
-            // auto time_span = static_cast<chrono::duration<double>>(end - start);
-            // cout<< "Time remain:  "<< TURN_TIME - time_span.count()<< " seconds !!!" << endl;
-            /*if (TURN_TIME - time_span.count() < 0.0) {
-                cout << "Time is over" << endl;
-                player_1_active = false;
-                player_2_active = true;
-                active_status = END_TURN;
-                break;
-            }*/
             active_status = NOTHING;
 
             int rec = player_1.receive(packet);
@@ -206,7 +190,7 @@ int main(int argc, char* argv[]) {
             
             if (active_status == BUY_CARD) {
                 
-                //start = sc.now(); 
+ 
                 cout << "##Нужно выложить карту из маркета" << endl;
 
                 if (market_deck.getSize() == 0) {
@@ -224,14 +208,12 @@ int main(int argc, char* argv[]) {
                     return 1;
                 }
                 cout << "##Отправил запрос маркету" << endl;
-                //end = sc.now(); 
                 
             }
             if (active_status == PLAY_CARD){//Отправляем карту 2 игроку на прорисовку
                 packet.clear();
-                packet << PLAY_CARD <<  buff_act.action_from_card.getId() << buff_act.position;//научить понимать какую карту выложил 1 игрок
+                packet << PLAY_CARD <<  buff_act.action_from_card.getId() << buff_act.position;
                 cout<<"GOT CARD";
-                //______________________Посмотреть + разобрать
             }
 
             if (active_status == END_TURN) {
@@ -240,17 +222,11 @@ int main(int argc, char* argv[]) {
                 player_2_active = true;
                 break;
             }
-            // auto time_span = static_cast<chrono::duration<double>>(end - start);
-            // cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
-            // cout << "nov zahod" << endl;
-            // active_status = END_TURN;
         }
 
-        // Обработка действий за ход
-        //cout << "Конец хода первого" << endl;
         cout << "Оработка конца ходa" << endl;
         battle_log.push_back(turn_log);
-
+        ///////////////////
         for (size_t i = 0; i < turn_log.size(); i++) {
             turn_log[i].print_action();
             if (turn_log[i].action_status == UTIL_CARD) {
@@ -260,7 +236,7 @@ int main(int argc, char* argv[]) {
                 cout << "less " << turn_log[i].action_from_card.UtRule.ut_TextRule << endl;
             }
         }
-
+        ///////////////////
         is_played_green_race = 0;
         is_played_red_race = 0;
         is_played_yellow_race = 0;
@@ -308,8 +284,6 @@ int main(int argc, char* argv[]) {
 
             }
             if (turn_log.at(i).action_status == UTIL_CARD) {
-                // Говорим колоде игрока, чтобы карта удалилась
-                // Todo....
                 total_dmg += turn_log.at(i).action_from_card.UtRule.ut_DamageCard;
                 less_card += turn_log.at(i).action_from_card.UtRule.ut_TextRule % 10;
                 restore_hp += turn_log.at(i).action_from_card.UtRule.ut_RestoreHPCard;
@@ -364,19 +338,7 @@ int main(int argc, char* argv[]) {
         coins_per_turn = 0;
         turn_log.clear();
 
-        //start = sc.now();
         while (player_2_active) {
-            // end = sc.now();
-            // auto time_span = static_cast<chrono::duration<double>>(end - start);
-            // cout<< "Time remain:  "<< TURN_TIME - time_span.count()<< " seconds !!!" << endl;
-           /* if (TURN_TIME - time_span.count() < 0.0) {
-                cout << "Time is over" << endl;
-                player_2_active = false;
-                player_1_active = true;
-                active_status = END_TURN;
-                break;
-            }*/
-           //cout << "Готов обработать Action" << endl;
             active_status = NOTHING;
 
             int rec = player_2.receive(packet);
@@ -432,13 +394,8 @@ int main(int argc, char* argv[]) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
             }
-            //cout << "Отправлено на отрисовку" << endl;
-            // chrono::steady_clock sc;
-            // std::chrono::_V2::steady_clock::time_point start;
-            // std::chrono::_V2::steady_clock::time_point end;
             if (active_status == BUY_CARD) {
                 
-                //start = sc.now(); 
                 cout << "##Нужно выложить карту из маркета" << endl;
 
                 if (market_deck.getSize() == 0) {
@@ -466,10 +423,6 @@ int main(int argc, char* argv[]) {
                 player_1_active = true;
                 break;
             }
-            // auto time_span = static_cast<chrono::duration<double>>(end - start);
-            // cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
-            // cout << "nov zahod" << endl;
-            // active_status = END_TURN;
         }
 
         // Обработка действий за ход
@@ -529,8 +482,6 @@ int main(int argc, char* argv[]) {
 
             }
             if (turn_log.at(i).action_status == UTIL_CARD) {
-                // Говорим колоде игрока, чтобы карта удалилась 
-                // Todo....
                 total_dmg += turn_log.at(i).action_from_card.UtRule.ut_DamageCard;
                 less_card += turn_log.at(i).action_from_card.UtRule.ut_TextRule % 10;
                 restore_hp += turn_log.at(i).action_from_card.UtRule.ut_RestoreHPCard;
@@ -543,11 +494,6 @@ int main(int argc, char* argv[]) {
         cout << "-- Урон за ход второму игроку = " << total_dmg << endl;
         cout << " ++ Восстановлено первым за ход = " << restore_hp << endl;
         cout << " << На " << less_card  << " карт меньше в раздаче в следующем ходу" << endl;
-
-        // total_dmg = 0;
-        // restore_hp = 0;
-        // coins_per_turn = 0;
-        // turn_log.clear();
 
         if (player_1_hp <= 0) {
             packet.clear();

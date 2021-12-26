@@ -60,7 +60,6 @@ int main(int argc, char* argv[]) {
     playerOneDeck.move(1450, 670);
     playerOneDiscard.move(1450, 790);
 
-    /*heroImage.setFillColor(Color::Transparent);*/
     heroStats.setFillColor(Color::Transparent);
 
     for (int i=0;i<PlayerHand.size();i++){
@@ -112,13 +111,6 @@ int main(int argc, char* argv[]) {
 
     additionalMarket.setFillColor(Color::Transparent);
 
-    /*for (int i=0;i<market.size();i++){
-        market[i].setFillColor(Color::Transparent);
-    }*/
-
-    //mainDeck.setFillColor(Color::Transparent);
-
-
 	
     RectangleShape endTurnButton(Vector2f(130.f, 90.f));
     endTurnButton.move(Vector2f(1380.f, 294.f));
@@ -151,8 +143,6 @@ int main(int argc, char* argv[]) {
         EnemyBattleCards[i].setFillColor(Color(175, 180, 240));
     }
 
-    //enemyOutpost1.setFillColor(Color(175, 180, 240));
-    //enemyOutpost2.setFillColor(Color(175, 180, 240));
 
     RectangleShape enemyImage(Vector2f(220.f, 308.f));
     RectangleShape enemyDeck(Vector2f(220.f, 90.f));
@@ -164,19 +154,10 @@ int main(int argc, char* argv[]) {
     history.move(1120, 20);
     giveUp.move(1360, 20);
 
-    //enemyImage.setFillColor(Color(175, 180, 240));
     enemyDeck.setFillColor(Color::Transparent);
-    //history.setFillColor(Color(175, 180, 240));
-    //giveUp.setFillColor(Color::Transparent);
-
-
-
-
 
     ///////ЧИТАТЬ КОД СЛЕДУЕТ НАЧИНАЯ С ЭТОЙ СТРОКИ(ну и почитайте функции пожожда)
-    // int hp=0;
-    // int damage=0;
-    // int coin=0;
+
     sf::Sprite ShowBIG(empty_texture);
     ShowBIG.setScale(0.7,0.7);
     ShowBIG.move(Vector2f(20.f, 330.f));
@@ -260,17 +241,10 @@ int main(int argc, char* argv[]) {
     connect_logic_to_graph(EnemyBattleCards, enemy_battle_cards);
     MainDeck Deck(0,'m');
     Deck.shuffle_deck();
-    //MainDeck MarketDeck(6,'m');
-    //Deck.giveHand(player_hand,d,5,discrad_texture);
-    //MarketDeck.giveHand(market_cards,d,5,discrad_texture);
-    //connect_logic_to_graph(PlayerHand,player_hand);
-    //connect_logic_to_graph(market,market_cards);
 
     int flag_draw = 0;
-	//while (window.isOpen()){
-        Event event;
-		//while (window.pollEvent(event)){
-            
+    Event event;
+
     //'_________________________________________________________'
 
             Card buff_card(111);
@@ -279,12 +253,7 @@ int main(int argc, char* argv[]) {
             int pos = 0;
             int buff_card_id = 0;
             int less_card = 0;
-            //DeckCard player_deck(5,1);
-
-            // if (client_socket.receive(packet) != sf::Socket::Done) {  //Получен статус на начало игры
-            //     cout << " Ne udalos" << endl;
-            //     //return 1;
-            // }
+  
             int rec=0;
             for (int i = 0; i < 5; i++){ // Получаем 5 карт в маркет
                 client_socket.receive(packet);
@@ -297,36 +266,6 @@ int main(int argc, char* argv[]) {
             }
             connect_logic_to_graph(market, market_cards);
             //_____________________________________________ Идет отрисовка полученного в начале игры на маркет
-            /*window.clear(Color::White);
-            window.draw(BackGround);
-            draw_rec_vector(PlayerHand,window);
-            window.draw(heroImage);
-            window.draw(heroStats);
-            window.draw(playerOneDeck);
-            window.draw(playerOneDiscard);
-            window.draw(outpost1);
-            window.draw(outpost2);
-            draw_rec_vector(BattleCards,window);
-            if (flag_draw){
-                window.draw(ShowBIG);
-            }
-            window.draw(additionalMarket);
-            draw_rec_vector(market,window);
-        
-            window.draw(mainDeck);
-            window.draw(endTurnButton);
-            window.draw(enemyOutpost1);
-            window.draw(enemyOutpost2);
-            draw_rec_vector(EnemyBattleCards,window);
-            window.draw(enemyImage);
-            window.draw(enemyDeck);
-            window.draw(history);
-            window.draw(giveUp);
-            window.draw(Discard_rec);
-            window.draw(text);
-            window.draw(text_my_hp);
-            window.draw(text_enemy_hp);
-            window.display();*/
             draw(window,BackGroundFirst,heroImage,heroStats,PlayerHand,playerOneDeck,playerOneDiscard,
             BattleCards,ShowBIG,market,mainDeck,endTurnButton,EnemyBattleCards,
             enemyImage,enemyDeck,history,giveUp,Discard_rec,text,
@@ -340,7 +279,6 @@ int main(int argc, char* argv[]) {
                 packet >> net_status >> buff_card_id;
                 buff_card = return_card(buff_card_id);
                 buff_card.texture.loadFromFile(buff_card.path_file_img);
-                //player_deck.append(card);
                 Deck.append(buff_card);
             }
 
@@ -349,14 +287,13 @@ int main(int argc, char* argv[]) {
                     rec=client_socket.receive(packet);
                     if (rec != sf::Socket::Done) {
                         cout << " Ne udalos" << endl;
-                        //return 1;
+                        return 1;
                     }
+
                     packet >> net_status >> buff_card_id;
                     buff_card=return_card(buff_card_id);
                     buff_card.texture.loadFromFile(buff_card.path_file_img);
-                    //cout << net_status << endl;
                     buff_card.TargetCard = PLAYER_DECK;
-                    //player_deck.append(card); // наполняем вектор колоды
                     Deck.append(buff_card);
                 }
             }
@@ -367,9 +304,9 @@ int main(int argc, char* argv[]) {
             rec = client_socket.receive(packet);
             if (rec != sf::Socket::Done) { // Ожидаем статус YOUR_TURN или WAIT
                 cout << " Ne udaloss" << endl;
+                return 1;
             }
 
-            //Card buff_card(111);
             int action_status = NOTHING;
             int number_card = 0;
             pos = -1;
@@ -409,7 +346,7 @@ int main(int argc, char* argv[]) {
                         action_status = NOTHING;
                         end = scc.now();
                         auto time_span = static_cast<chrono::duration<double>> (end - start);
-                        cout << "time_span = " << time_span.count() << endl;
+                        cout << "time_remain = " << TURN_TIME - time_span.count() << endl;
                         // Тут надо написать вывод времени на экран целых секунд (int) time_span.count();
                         bool time_is_over = false;
                         if (TURN_TIME - time_span.count() < 0.0) {
@@ -427,11 +364,11 @@ int main(int argc, char* argv[]) {
                                 }
 
                             }
-                            for (int i=0;i<EnemyBattleCards.size();i++){
+                            for (int i = 0; i < EnemyBattleCards.size(); i++){
                                 enemy_battle_cards.deck_vec[i]=empty_card;
                             }
-                            connect_logic_to_graph(EnemyBattleCards,enemy_battle_cards);
-                            connect_logic_to_graph(PlayerHand,player_hand);
+                            connect_logic_to_graph(EnemyBattleCards, enemy_battle_cards);
+                            connect_logic_to_graph(PlayerHand, player_hand);
                             time_is_over = true;
 
                         }
@@ -566,10 +503,6 @@ int main(int argc, char* argv[]) {
                                     break;
                                 }
                             }
-                            // auto end = scc.now();
-                            // auto time_span = static_cast<chrono::duration<double>>(end - start);
-                            // cout<<"Operation took: "<< time_span.count()<<" seconds !!!" << endl;
-
 
                             if (event.mouseButton.button == sf::Mouse::Middle){
                                 //Добавить  просмотр вывода карт противника
@@ -612,14 +545,10 @@ int main(int argc, char* argv[]) {
                             }
                         }
                     }
-                        //cout << "Message 12" << endl;
                         //######################################
 
-                        // auto start = scc.now();
-                            
-                        //cout << " Пытаюсь отправить... " << action_status << endl;
+
                         if (action_status == NOTHING) {
-                            //cout << "NOTHING. line 515" << endl;
                             continue;
                         }
                         if (client_socket.send(packet) != sf::Socket::Done) { // Отправляем Action на сервер
@@ -627,12 +556,7 @@ int main(int argc, char* argv[]) {
                             cout << " Ne udalos1" << endl;
                         }
 
-    
-                        //start = scc.now();
-                        cout << "Message 1" << endl;
-
                         if (action_status == END_TURN || action_status == GIVE_UP) {
-                            //net_status = WAIT;
                             rec = client_socket.receive(packet);
 
                             while (rec == sf::Socket::NotReady) {
@@ -646,26 +570,24 @@ int main(int argc, char* argv[]) {
                             }
                             packet >> net_status >> my_hp >> enemy_hp >> heal_per_turn >> dmg_per_turn;
                             if (net_status == WAIT) {
-                                cout << "orghu4hihnu4bh4u4o5h38kchg45hg4h4o4jhoj5ohj4o" << endl;
                             }
+
                             action_status = NOTHING;
                             break;
                         }
-                        cout << "Message 2" << endl;
+
 
                         if (action_status == PLAY_CARD && buff_card.CoinCard != 0) {
                             coins_per_turn += buff_card.CoinCard;
                             cout << "$$ Получено монет с розыгрыша= " << buff_card.CoinCard
                                 << "$$ Монет на текущий момент = " << coins_per_turn << endl;
                         }
-                        //cout << "Message 14" << endl;
 
                         if (action_status == UTIL_CARD && buff_card.UtRule.ut_CoinCard != 0) {
                             coins_per_turn += buff_card.UtRule.ut_CoinCard;
                             cout << "$$ Получено монет при удалении = " << buff_card.UtRule.ut_CoinCard
                                 << " $$ Монет на текущий момент = " << coins_per_turn << endl;
                         }
-                        //cout << "Message 15" << endl;
 
                         if (action_status == BUY_CARD) { // Если карту купили, то нужно принять от сервера какую нужно выложить в свободный слот маркета
                             cout << "Жду карту от сервера" << endl;
@@ -695,10 +617,6 @@ int main(int argc, char* argv[]) {
                         }
                        
 
-                        // auto end = scc.now(); 
-                        // auto time_span = static_cast<chrono::duration<double>>(end - start);
-                        // cout<< "Main loop took: "<< time_span.count()<<" seconds !!!" << endl;
-
                         action_status = NOTHING;
                     }
                     break; //Выход из кейса YOUR_TURN
@@ -708,8 +626,6 @@ int main(int argc, char* argv[]) {
                 {   
                     endTurn = endTurn_end;
                     cout << "wait" << endl;
-                    //window.clear(Color::Blue);
-                    //connect_logic_to_graph(PlayerHand,player_hand);
                     window.clear();
                     window.draw(BackGroundSec);
                     window.draw(heroImage);
@@ -718,8 +634,6 @@ int main(int argc, char* argv[]) {
                     window.draw(playerOneDeck);
                     window.draw(playerOneDiscard);
 
-                    //window.draw(outpost1);
-                    //window.draw(outpost2);
                     draw_rec_vector(BattleCards,window);
                     if (flag_draw == 1 ){
                         window.draw(ShowBIG);
@@ -733,8 +647,6 @@ int main(int argc, char* argv[]) {
                     window.draw(mainDeck);
                     window.draw(endTurnButton);
 
-            //window.draw(enemyOutpost1);
-            //window.draw(enemyOutpost2);
                     draw_rec_vector(EnemyBattleCards,window);
                     window.draw(enemyImage);
                     window.draw(enemyDeck);
@@ -765,11 +677,6 @@ int main(int argc, char* argv[]) {
 
                     packet >> net_status;
                     cout << "Получено: " << ST << net_status << endl;
-
-                    /*if (net_status != YOUR_TURN && net_status != OPPONENT_TURN) {
-                        //cout << "Бред получили";
-                        return 1;
-                    }*/
                     
                     if (net_status == YOUR_TURN) {
                         packet >> my_hp >> enemy_hp >> less_card;
@@ -799,14 +706,12 @@ int main(int argc, char* argv[]) {
                             EnemyBattleCards[pos].setTexture(&enemy_battle_cards.deck_vec[pos].texture);
                             enemy_battle_cards.avaliable[pos]=1;
                             cout<<"GOT CARD";
-
                         }
 
                         if (action_status == UTIL_CARD) {
                             save = buff_card.texture;
                             ShowBIG.setTexture(save);
                             flag_draw = 2 ;
-
                         }
 
                         if (action_status == BUY_CARD) { // Новую карту в маркете тоже нужно отрисовать
@@ -815,7 +720,7 @@ int main(int argc, char* argv[]) {
                             connect_logic_to_graph(market, market_cards);
         
                             rec = client_socket.receive(packet);
-                            while (rec==sf::Socket::NotReady){
+                            while (rec==sf::Socket::NotReady) {
                                 rec = client_socket.receive(packet);
                                 usleep(100000);
                             }
@@ -882,7 +787,6 @@ int main(int argc, char* argv[]) {
                         }
                     }
                    
-
                 }
                 default: cout << "DEFAULT" << endl; break;
                 }
