@@ -139,8 +139,8 @@ int main(int argc, char* argv[]) {
                 continue;
             }
             if (rec != sf::Socket::Done) {
-                cout << " Ne udalosot clienta" << endl;
-                return 1;
+                cout << "---Disconnect client---" << endl;
+                active_status = DISCONNECT;
             }
 
             // Принимаем пакет от активного игрока
@@ -152,7 +152,7 @@ int main(int argc, char* argv[]) {
                 cout << "active_status = " << active_status << endl;
             }
 
-            if (active_status == GIVE_UP) {
+            if (active_status == GIVE_UP || active_status == DISCONNECT) {
                 cout << " Give up " << endl;
 
                 packet.clear();
@@ -297,7 +297,11 @@ int main(int argc, char* argv[]) {
         cout << " ++ Восстановлено первым за ход = " << restore_hp << endl;
         cout << " << На " << less_card  << " карт меньше в раздаче в следующем ходу" << endl;
 
-        
+        if (active_status == GIVE_UP || active_status == DISCONNECT) {
+            cout << "First player has disconnect" << endl;
+            break; 
+        }
+
 
         if (player_2_hp <= 0) {
             packet.clear();
@@ -323,6 +327,7 @@ int main(int argc, char* argv[]) {
         less_card = 0;
         if (player_2.send(packet) != sf::Socket::Done) { 
             cout << " Ne udalosot clienta 2" << endl;
+            cout << "2t24t3";
             return 1;
         }
 
@@ -347,8 +352,8 @@ int main(int argc, char* argv[]) {
                 continue;   
             }
             if (rec != sf::Socket::Done) {
-                cout << " Ne udalosot clienta" << endl;
-                return 1;
+                cout << "---Disconnect client---" << endl;
+                active_status = DISCONNECT;
             }
             
             // Принимаем пакет от активного игрока
@@ -360,7 +365,7 @@ int main(int argc, char* argv[]) {
                 cout << "active_status = " << active_status << endl;
             }
 
-             if (active_status == GIVE_UP) {
+             if (active_status == GIVE_UP || active_status == DISCONNECT) {
                 cout << " Give up " << endl;
 
                 packet.clear();
@@ -495,6 +500,11 @@ int main(int argc, char* argv[]) {
         cout << " ++ Восстановлено первым за ход = " << restore_hp << endl;
         cout << " << На " << less_card  << " карт меньше в раздаче в следующем ходу" << endl;
 
+        if (active_status == GIVE_UP || active_status == DISCONNECT) {
+            cout << "Second player has disconnect" << endl;
+            break;
+        }
+
         if (player_1_hp <= 0) {
             packet.clear();
             packet << WIN;
@@ -518,6 +528,7 @@ int main(int argc, char* argv[]) {
         less_card = 0;
         if (player_1.send(packet) != sf::Socket::Done) { // Даём разрешение на ход первому игроку
             cout << " Ne udalosot clienta 2" << endl;
+            cout << "0rtlkh059j0" << endl;
             return 1;
         }
 

@@ -26,7 +26,8 @@ enum PlayerActions {
     UTIL_CARD,
     GET_CARD,
     END_TURN,
-    GIVE_UP
+    GIVE_UP,
+    DISCONNECT
 };
 
 class Actions {

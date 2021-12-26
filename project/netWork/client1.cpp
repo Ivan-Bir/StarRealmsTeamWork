@@ -15,7 +15,7 @@
 #define ST "STATUS: "
 #define MAX_BUFF 1024
 #define DEFAULT_PORT 8080
-#define TURN_TIME 100
+#define TURN_TIME 45
 
 using namespace std;
 
@@ -333,7 +333,7 @@ int main(int argc, char* argv[]) {
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
-                {   coins_per_turn = 100;
+                {   coins_per_turn = 0;
                     cout << "My turn";
                     endTurn = endTurn_start;
                     Deck.giveHand(player_hand, d, (5 - less_card), discrad_texture);
@@ -372,7 +372,7 @@ int main(int argc, char* argv[]) {
                             time_is_over = true;
 
                         }
-                        while (window.pollEvent(event) && time_is_over == false) {
+                        while (window.pollEvent(event) && time_is_over != true) {
                             if (event.type == Event::MouseMoved){
                                 continue;
                             }
@@ -416,8 +416,15 @@ int main(int argc, char* argv[]) {
 
                         window.display();
                        
-                        if (event.type == Event::Closed)
+                        if (event.type == Event::Closed) {
+                            action_status = DISCONNECT;
+                            packet.clear();
+                            packet << action_status;
                             window.close();
+                            cout << "Window closed. Disconnect..." << endl;
+                            return 1;      
+                        }
+                            
 
                         if (event.type == Event::MouseButtonPressed) {
                             
@@ -561,7 +568,7 @@ int main(int argc, char* argv[]) {
 
                             while (rec == sf::Socket::NotReady) {
                                 rec = client_socket.receive(packet);
-                                usleep(100000);
+                                usleep(10000);
                             }
                             cout << "Получен конец хода" << endl;
                             if (rec != sf::Socket::Done) {
@@ -569,6 +576,7 @@ int main(int argc, char* argv[]) {
                                 return 1;
                             }
                             packet >> net_status >> my_hp >> enemy_hp >> heal_per_turn >> dmg_per_turn;
+
                             if (net_status == WAIT) {
                             }
 
@@ -595,7 +603,7 @@ int main(int argc, char* argv[]) {
 
                             while (rec == sf::Socket::NotReady){
                                 rec = client_socket.receive(packet);
-                                usleep(100000);
+                                usleep(10000);
                             }
 
                             if (rec != sf::Socket::Done) {
@@ -623,7 +631,9 @@ int main(int argc, char* argv[]) {
                 }
 
                 case WAIT: 
-                {   
+                {   cout << "hp " << my_hp << " en_hp " << enemy_hp << " +hp " << heal_per_turn <<
+                        " dmg " << dmg_per_turn << endl;
+                    // Todo - Отобразить разницу в хп
                     endTurn = endTurn_end;
                     cout << "wait" << endl;
                     window.clear();
@@ -720,9 +730,9 @@ int main(int argc, char* argv[]) {
                             connect_logic_to_graph(market, market_cards);
         
                             rec = client_socket.receive(packet);
-                            while (rec==sf::Socket::NotReady) {
+                            while (rec == sf::Socket::NotReady) {
                                 rec = client_socket.receive(packet);
-                                usleep(100000);
+                                usleep(10000);
                             }
 
                             if (rec != sf::Socket::Done) {
@@ -760,9 +770,13 @@ int main(int argc, char* argv[]) {
                     window.draw(victory);
                     window.display();
                     while (window.pollEvent(event)){
-                        if (event.type == Event::Closed)
+                        if (event.type == Event::Closed) {
                             window.close();
-                        else{
+                            return 5;
+                        }
+                            
+                        else {
+                            usleep(10000);
                             continue;
                         }
                         
@@ -771,7 +785,7 @@ int main(int argc, char* argv[]) {
                 }
                 case LOSE:
                 {
-                    cout << "Maybe next time..." << endl; 
+                    cout << "Maybe next time..." << endl;
                     Sprite defeat;
                     Texture def;
                     def.loadFromFile("../include/images/defeat_screen.png");
@@ -780,9 +794,13 @@ int main(int argc, char* argv[]) {
                     window.draw(defeat);
                     window.display();
                     while (window.pollEvent(event)){
-                        if (event.type == Event::Closed)
+                        if (event.type == Event::Closed) {
                             window.close();
-                        else{
+                            return 4;
+                        }
+                            
+                        else {
+                            usleep(10000);
                             continue;
                         }
                     }
