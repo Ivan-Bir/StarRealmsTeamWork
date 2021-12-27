@@ -52,13 +52,13 @@ int main(int argc, char* argv[]) {
 	heroImage.move(20, 572);
     heroStats.move(260, 720);
     
-	PlayerHand[0].move(600, 670);
-    PlayerHand[1].move(770, 670);
-    PlayerHand[2].move(940, 670);
-    PlayerHand[3].move(1110, 670);
-    PlayerHand[4].move(1280, 670);
-    playerOneDeck.move(1450, 670);
-    playerOneDiscard.move(1450, 790);
+	PlayerHand[0].move(600, 635);
+    PlayerHand[1].move(770, 635);
+    PlayerHand[2].move(940, 635);
+    PlayerHand[3].move(1110, 635);
+    PlayerHand[4].move(1280, 635);
+    playerOneDeck.move(1450, 635);
+    playerOneDiscard.move(1450, 740);
 
     heroStats.setFillColor(Color::Transparent);
 
@@ -79,13 +79,13 @@ int main(int argc, char* argv[]) {
     outpost1.move(265, 530);
     outpost2.move(448, 530);
 
-    BattleCards[0].move(631, 482);
-    BattleCards[1].move(766, 482);
-    BattleCards[2].move(901, 482);
-    BattleCards[3].move(1036, 482);
-    BattleCards[4].move(1171, 482);
-    BattleCards[5].move(1306, 482);
-    BattleCards[6].move(1441, 482);
+    BattleCards[0].move(631, 432);
+    BattleCards[1].move(766, 432);
+    BattleCards[2].move(901, 432);
+    BattleCards[3].move(1036, 432);
+    BattleCards[4].move(1171, 432);
+    BattleCards[5].move(1306, 432);
+    BattleCards[6].move(1441, 432);
 
     outpost1.setFillColor(Color::Transparent);
     outpost2.setFillColor(Color::Transparent);
@@ -100,20 +100,20 @@ int main(int argc, char* argv[]) {
         market.push_back(RectangleShape(Vector2f(120.f, 168.f)));
     }
     RectangleShape mainDeck(Vector2f(160.f, 120.f));
-    additionalMarket.move(265, 294);
+    additionalMarket.move(265, 244);
     
-    market[0].move(400, 294);
-    market[1].move(535, 294);
-    market[2].move(670, 294);
-    market[3].move(805, 294);
-    market[4].move(940, 294);
-    mainDeck.move(1075, 318);
+    market[0].move(400, 244);
+    market[1].move(535, 244);
+    market[2].move(670, 244);
+    market[3].move(805, 244);
+    market[4].move(940, 244);
+    mainDeck.move(1075, 268);
 
     additionalMarket.setFillColor(Color::Transparent);
 
 	
     RectangleShape endTurnButton(Vector2f(130.f, 90.f));
-    endTurnButton.move(Vector2f(1380.f, 294.f));
+    endTurnButton.move(Vector2f(1380.f, 244.f));
 	endTurnButton.setFillColor(Color::White);
     sf::Texture endTurn_start;
     sf::Texture endTurn_end;
@@ -122,7 +122,7 @@ int main(int argc, char* argv[]) {
     sf::Texture endTurn = endTurn_start;
     endTurnButton.setTexture(&endTurn);
     RectangleShape Discard_rec(Vector2f(150.f, 210.f));
-    Discard_rec.move(1380.f, 400.f);
+    Discard_rec.move(1380.f, 350.f);
     //Discard_rec.setFillColor(Color(175, 180, 240));
     RectangleShape enemyOutpost1(Vector2f(168.f, 120.f));
     RectangleShape enemyOutpost2(Vector2f(168.f, 120.f));
@@ -134,11 +134,11 @@ int main(int argc, char* argv[]) {
 
     enemyOutpost1.move(265, 154);
     enemyOutpost2.move(448, 154);
-    EnemyBattleCards[0].move(631, 106);
-    EnemyBattleCards[1].move(766, 106);
-    EnemyBattleCards[2].move(901, 106);
-    EnemyBattleCards[3].move(1036, 106);
-    EnemyBattleCards[4].move(1171, 106);
+    EnemyBattleCards[0].move(631, 56);
+    EnemyBattleCards[1].move(766, 56);
+    EnemyBattleCards[2].move(901, 56);
+    EnemyBattleCards[3].move(1036, 56);
+    EnemyBattleCards[4].move(1171, 56);
     for (int i=0;i<EnemyBattleCards.size();i++){
         EnemyBattleCards[i].setFillColor(Color(175, 180, 240));
     }
@@ -189,7 +189,7 @@ int main(int argc, char* argv[]) {
     //history.setColor(Color::Transparent);
     giveUp.setTexture(&button_giveup);
     sf::Sprite coin(coin_texture);
-    coin.move(260,720);
+    coin.move(246,720);
     BackGroundFirst.setTextureRect(backgr_rect);
     BackGroundSec.setTextureRect(backgr_rect);
     sf::Texture hero_image;
@@ -226,7 +226,7 @@ int main(int argc, char* argv[]) {
     Text coin_count("", font, 30);
     coin_count.setColor(Color::Black);
     coin_count.setStyle(Text::Bold);
-    coin_count.setPosition(275, 730);
+    coin_count.setPosition(274, 730);
 
     Text damage("", font, 50);
     damage.setColor(Color::Red);
@@ -245,7 +245,7 @@ int main(int argc, char* argv[]) {
     Text timer("",font,20);
     timer.setColor(Color::Black);
     timer.setStyle(Text::Bold);
-    timer.setPosition(Vector2f(1420.f, 340.f));
+    timer.setPosition(Vector2f(1420.f, 290.f));
 
     DeckCard player_hand(5, 1);
     DeckCard battle_cards(5, 1);
@@ -353,7 +353,7 @@ int main(int argc, char* argv[]) {
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
-                {   coins_per_turn = 100;
+                {   coins_per_turn = 0;
                     cout << "My turn";
                     timer.setColor(Color::Black);
                     int fade = 0;
