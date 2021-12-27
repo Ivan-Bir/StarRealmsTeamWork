@@ -15,9 +15,9 @@
 #define ST "STATUS: "
 #define MAX_BUFF 1024
 #define DEFAULT_PORT 8080
+#define TURN_TIME 45
 
 using namespace std;
-
 
 
 
@@ -60,7 +60,6 @@ int main(int argc, char* argv[]) {
     playerOneDeck.move(1450, 670);
     playerOneDiscard.move(1450, 790);
 
-    /*heroImage.setFillColor(Color::Transparent);*/
     heroStats.setFillColor(Color::Transparent);
 
     for (int i=0;i<PlayerHand.size();i++){
@@ -112,13 +111,6 @@ int main(int argc, char* argv[]) {
 
     additionalMarket.setFillColor(Color::Transparent);
 
-    /*for (int i=0;i<market.size();i++){
-        market[i].setFillColor(Color::Transparent);
-    }*/
-
-    //mainDeck.setFillColor(Color::Transparent);
-
-
 	
     RectangleShape endTurnButton(Vector2f(130.f, 90.f));
     endTurnButton.move(Vector2f(1380.f, 294.f));
@@ -151,8 +143,6 @@ int main(int argc, char* argv[]) {
         EnemyBattleCards[i].setFillColor(Color(175, 180, 240));
     }
 
-    //enemyOutpost1.setFillColor(Color(175, 180, 240));
-    //enemyOutpost2.setFillColor(Color(175, 180, 240));
 
     RectangleShape enemyImage(Vector2f(220.f, 308.f));
     RectangleShape enemyDeck(Vector2f(220.f, 90.f));
@@ -164,19 +154,10 @@ int main(int argc, char* argv[]) {
     history.move(1120, 20);
     giveUp.move(1360, 20);
 
-    //enemyImage.setFillColor(Color(175, 180, 240));
     enemyDeck.setFillColor(Color::Transparent);
-    //history.setFillColor(Color(175, 180, 240));
-    //giveUp.setFillColor(Color::Transparent);
-
-
-
-
 
     ///////ЧИТАТЬ КОД СЛЕДУЕТ НАЧИНАЯ С ЭТОЙ СТРОКИ(ну и почитайте функции пожожда)
-    // int hp=0;
-    // int damage=0;
-    // int coin=0;
+
     sf::Sprite ShowBIG(empty_texture);
     ShowBIG.setScale(0.7,0.7);
     ShowBIG.move(Vector2f(20.f, 330.f));
@@ -227,50 +208,52 @@ int main(int argc, char* argv[]) {
     text.setColor(Color::Black);
     text.setStyle(Text::Bold);
     text.setPosition(1410.f,320.f);
-    Text text_my_hp("", font, 30);
+    Text text_my_hp("", font, 60);
     text_my_hp.setColor(Color::Green);
     text_my_hp.setStyle(Text::Bold);
-    text_my_hp.setPosition(20.f,520.f);
+    text_my_hp.setPosition(20.f,500.f);
 
-    Text text_enemy_hp("", font, 30);
+    Text text_enemy_hp("", font, 60); 
     text_enemy_hp.setColor(Color::Red);
     text_enemy_hp.setStyle(Text::Bold);
-    text_enemy_hp.setPosition(20.f,340.f);
+    text_enemy_hp.setPosition(20.f,320.f);
 
-    Text coin_count("",font,30);
+    Text coin_count("", font, 30);
     coin_count.setColor(Color::Black);
     coin_count.setStyle(Text::Bold);
-    coin_count.setPosition(275,730);
+    coin_count.setPosition(275, 730);
 
-    Text damage("",font,50);
+    Text damage("", font, 50);
     damage.setColor(Color::Red);
     damage.setStyle(Text::Bold);
 
+    Text text_dmg_per_turn("", font, 100);
+    text_dmg_per_turn.setColor(Color::Red);
+    text_dmg_per_turn.setStyle(Text::Bold);
+    text_dmg_per_turn.setPosition(80, 85);
 
-    DeckCard player_hand(5,1);
-    DeckCard battle_cards(5,1);
-    DeckCard market_cards(5,1);
-    DeckCard enemy_battle_cards(5,1);
+    Text text_heal_per_turn("", font, 100);
+    text_heal_per_turn.setColor(Color::Green);
+    text_heal_per_turn.setStyle(Text::Bold);
+    text_heal_per_turn.setPosition(75, 666);
+
+    DeckCard player_hand(5, 1);
+    DeckCard battle_cards(5, 1);
+    DeckCard market_cards(5, 1);
+    DeckCard enemy_battle_cards(5, 1);
     Discard d;
-    for (int i=0;i<BattleCards.size();i++){
-        battle_cards.deck_vec[i]=empty_card;
+    for (int i = 0; i < BattleCards.size(); i++){
+        battle_cards.deck_vec[i] = empty_card;
     }
-    connect_logic_to_graph(BattleCards,battle_cards);
-    connect_logic_to_graph(PlayerHand,player_hand);
+    connect_logic_to_graph(BattleCards, battle_cards);
+    connect_logic_to_graph(PlayerHand, player_hand);
     connect_logic_to_graph(EnemyBattleCards, enemy_battle_cards);
-    MainDeck Deck(0,'m');
+    MainDeck Deck(0, 'm');
     Deck.shuffle_deck();
-    //MainDeck MarketDeck(6,'m');
-    //Deck.giveHand(player_hand,d,5,discrad_texture);
-    //MarketDeck.giveHand(market_cards,d,5,discrad_texture);
-    //connect_logic_to_graph(PlayerHand,player_hand);
-    //connect_logic_to_graph(market,market_cards);
 
     int flag_draw = 0;
-	//while (window.isOpen()){
-        Event event;
-		//while (window.pollEvent(event)){
-            
+    Event event;
+
     //'_________________________________________________________'
 
             Card buff_card(111);
@@ -279,13 +262,8 @@ int main(int argc, char* argv[]) {
             int pos = 0;
             int buff_card_id = 0;
             int less_card = 0;
-            //DeckCard player_deck(5,1);
-
-            // if (client_socket.receive(packet) != sf::Socket::Done) {  //Получен статус на начало игры
-            //     cout << " Ne udalos" << endl;
-            //     //return 1;
-            // }
-            int rec=0;
+  
+            int rec = 0;
             for (int i = 0; i < 5; i++){ // Получаем 5 карт в маркет
                 client_socket.receive(packet);
                 packet >> net_status >> buff_card_id;
@@ -297,36 +275,6 @@ int main(int argc, char* argv[]) {
             }
             connect_logic_to_graph(market, market_cards);
             //_____________________________________________ Идет отрисовка полученного в начале игры на маркет
-            /*window.clear(Color::White);
-            window.draw(BackGround);
-            draw_rec_vector(PlayerHand,window);
-            window.draw(heroImage);
-            window.draw(heroStats);
-            window.draw(playerOneDeck);
-            window.draw(playerOneDiscard);
-            window.draw(outpost1);
-            window.draw(outpost2);
-            draw_rec_vector(BattleCards,window);
-            if (flag_draw){
-                window.draw(ShowBIG);
-            }
-            window.draw(additionalMarket);
-            draw_rec_vector(market,window);
-        
-            window.draw(mainDeck);
-            window.draw(endTurnButton);
-            window.draw(enemyOutpost1);
-            window.draw(enemyOutpost2);
-            draw_rec_vector(EnemyBattleCards,window);
-            window.draw(enemyImage);
-            window.draw(enemyDeck);
-            window.draw(history);
-            window.draw(giveUp);
-            window.draw(Discard_rec);
-            window.draw(text);
-            window.draw(text_my_hp);
-            window.draw(text_enemy_hp);
-            window.display();*/
             draw(window,BackGroundFirst,heroImage,heroStats,PlayerHand,playerOneDeck,playerOneDiscard,
             BattleCards,ShowBIG,market,mainDeck,endTurnButton,EnemyBattleCards,
             enemyImage,enemyDeck,history,giveUp,Discard_rec,text,
@@ -340,7 +288,6 @@ int main(int argc, char* argv[]) {
                 packet >> net_status >> buff_card_id;
                 buff_card = return_card(buff_card_id);
                 buff_card.texture.loadFromFile(buff_card.path_file_img);
-                //player_deck.append(card);
                 Deck.append(buff_card);
             }
 
@@ -349,14 +296,13 @@ int main(int argc, char* argv[]) {
                     rec=client_socket.receive(packet);
                     if (rec != sf::Socket::Done) {
                         cout << " Ne udalos" << endl;
-                        //return 1;
+                        return 1;
                     }
+
                     packet >> net_status >> buff_card_id;
                     buff_card=return_card(buff_card_id);
                     buff_card.texture.loadFromFile(buff_card.path_file_img);
-                    //cout << net_status << endl;
                     buff_card.TargetCard = PLAYER_DECK;
-                    //player_deck.append(card); // наполняем вектор колоды
                     Deck.append(buff_card);
                 }
             }
@@ -367,18 +313,21 @@ int main(int argc, char* argv[]) {
             rec = client_socket.receive(packet);
             if (rec != sf::Socket::Done) { // Ожидаем статус YOUR_TURN или WAIT
                 cout << " Ne udaloss" << endl;
+                return 1;
             }
 
-            //Card buff_card(111);
             int action_status = NOTHING;
             int number_card = 0;
             pos = -1;
 
             packet >> net_status;
             cout << ST << net_status << endl;
+            if (net_status == WAIT) {
+                swap(hero_image, enemy_image);
+            }
             int coins_per_turn = 0;
-            int my_hp = 30;
-            int enemy_hp = 30;
+            int my_hp = 50;
+            int enemy_hp = 50;
             int heal_per_turn = 0;
             int dmg_per_turn = 0;
 
@@ -388,13 +337,14 @@ int main(int argc, char* argv[]) {
 
             chrono::steady_clock scc;
             std::chrono::_V2::steady_clock::time_point start; 
+            std::chrono::_V2::steady_clock::time_point end;
+            start = scc.now();
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
-                {   swap(hero_image,enemy_image);
-                    coins_per_turn = 100;
+                {   coins_per_turn = 100;
                     cout << "My turn";
-                    endTurn=endTurn_start;
+                    endTurn = endTurn_start;
                     Deck.giveHand(player_hand, d, (5 - less_card), discrad_texture);
                     less_card = 0;
                     connect_logic_to_graph(PlayerHand, player_hand);
@@ -403,12 +353,39 @@ int main(int argc, char* argv[]) {
                    
                     while(true) { // Todo Таймер на 45 сек
                         action_status = NOTHING;
-                        while (window.pollEvent(event)){
-                            if (event.type==Event::MouseMoved){
+                        end = scc.now();
+                        auto time_span = static_cast<chrono::duration<double>> (end - start);
+                        cout << "time_remain = " << TURN_TIME - time_span.count() << endl;
+                        // Тут надо написать вывод времени на экран целых секунд (int) time_span.count();
+                        bool time_is_over = false;
+                        if (TURN_TIME - time_span.count() < 0.0) {
+                            packet.clear();
+                            action_status = END_TURN;
+                            packet << action_status;
+                            for (int i = 0; i < PlayerHand.size(); i++){
+                                if (player_hand.deck_vec[i].getId() != 0){
+                                    d.get_card(PlayerHand,player_hand,i,discrad_texture);
+                                }
+                            }
+                            for (int i = 0; i < BattleCards.size(); i++){
+                                if (battle_cards.deck_vec[i].getId() != 0){
+                                    d.get_card(BattleCards,battle_cards,i,discrad_texture);
+                                }
+
+                            }
+                            for (int i = 0; i < EnemyBattleCards.size(); i++){
+                                enemy_battle_cards.deck_vec[i]=empty_card;
+                            }
+                            connect_logic_to_graph(EnemyBattleCards, enemy_battle_cards);
+                            connect_logic_to_graph(PlayerHand, player_hand);
+                            time_is_over = true;
+
+                        }
+                        while (window.pollEvent(event) && time_is_over != true) {
+                            if (event.type == Event::MouseMoved){
                                 continue;
                             }
 
-                        
                         window.clear(Color::White);
                         window.draw(BackGroundFirst);
                         window.draw(heroImage);
@@ -421,10 +398,19 @@ int main(int argc, char* argv[]) {
                         draw_rec_vector(BattleCards,window);
                         text_my_hp.setString("HP:"+to_string(my_hp));
                         text_enemy_hp.setString("HP:"+to_string(enemy_hp));
+                        text_dmg_per_turn.setString("-"+to_string(dmg_per_turn));
+                        text_heal_per_turn.setString("-"+to_string(heal_per_turn));
                         coin_count.setString(to_string(coins_per_turn));
                         window.draw(text_my_hp);
-                        window.draw(coin_count);
                         window.draw(text_enemy_hp);
+                        if (heal_per_turn != 0) {
+                            window.draw(text_heal_per_turn);
+                        }
+                        if (dmg_per_turn != 0) {
+                            window.draw(text_dmg_per_turn);
+                        }
+                        window.draw(coin_count);
+                        
                         window.draw(text);
                         if (flag_draw == 1){
                             window.draw(ShowBIG);
@@ -448,20 +434,26 @@ int main(int argc, char* argv[]) {
 
                         window.display();
                        
-                        if (event.type == Event::Closed)
+                        if (event.type == Event::Closed) {
+                            action_status = DISCONNECT;
+                            packet.clear();
+                            packet << action_status;
                             window.close();
-
-                        if (event.type == Event::MouseButtonPressed){
+                            cout << "Window closed. Disconnect..." << endl;
+                            return 1;      
+                        }
+                            
+                        if (event.type == Event::MouseButtonPressed) {
                             
                             ShowBIG.setTexture(empty_texture);
                             IntRect sprite_rect(0, 0, 300, 420);
                             ShowBIG.setTextureRect(sprite_rect);
                             flag_draw = 0;
                             
-                            if (event.mouseButton.button == sf::Mouse::Left) { // Розыгрыш карты
+                            if (event.mouseButton.button == sf::Mouse::Left) {
                                 int pos = check_if_clicked(PlayerHand, event, player_hand, window);
                                 cout << "Message LKM" << endl;
-                                if (pos!=-1) {
+                                if (pos != -1) {
 
                                     action_status = PLAY_CARD;
                                     packet.clear();
@@ -525,11 +517,16 @@ int main(int argc, char* argv[]) {
                                         break;
                                     } else { cout << "Not enought money " << endl; }
                                 }
-                            }
-                            // auto end = scc.now();
-                            // auto time_span = static_cast<chrono::duration<double>>(end - start);
-                            // cout<<"Operation took: "<< time_span.count()<<" seconds !!!" << endl;
 
+                                // Give up
+                                if (giveUp.getGlobalBounds().contains(   
+                                        window.mapPixelToCoords(sf::Mouse::getPosition(window)))) {
+                                    packet.clear();
+                                    action_status = GIVE_UP;
+                                    packet << action_status;
+                                    break;
+                                }
+                            }
 
                             if (event.mouseButton.button == sf::Mouse::Middle){
                                 //Добавить  просмотр вывода карт противника
@@ -554,7 +551,8 @@ int main(int argc, char* argv[]) {
                                     ShowBIG.setTexture(*(enemy_battle_cards.deck_vec[pos].GetTexture()));
                                 }
                             }
-                            if (event.mouseButton.button == sf::Mouse::Right){
+                            // Util Card
+                            if (event.mouseButton.button == sf::Mouse::Right) {
                                 pos=check_if_clicked(PlayerHand,event,player_hand,window);
                                 if (pos!=-1){
                                     save=*PlayerHand[pos].getTexture();
@@ -571,14 +569,10 @@ int main(int argc, char* argv[]) {
                             }
                         }
                     }
-                        //cout << "Message 12" << endl;
                         //######################################
 
-                        // auto start = scc.now();
-                            
-                        //cout << " Пытаюсь отправить... " << action_status << endl;
+
                         if (action_status == NOTHING) {
-                            //cout << "NOTHING. line 515" << endl;
                             continue;
                         }
                         if (client_socket.send(packet) != sf::Socket::Done) { // Отправляем Action на сервер
@@ -586,17 +580,12 @@ int main(int argc, char* argv[]) {
                             cout << " Ne udalos1" << endl;
                         }
 
-    
-                        start = scc.now();
-                        cout << "Message 1" << endl;
-
-                        if (action_status == END_TURN) {
-                            //net_status = WAIT;
+                        if (action_status == END_TURN || action_status == GIVE_UP) {
                             rec = client_socket.receive(packet);
 
-                            while (rec == sf::Socket::NotReady){
+                            while (rec == sf::Socket::NotReady) {
                                 rec = client_socket.receive(packet);
-                                usleep(100000);
+                                usleep(10000);
                             }
                             cout << "Получен конец хода" << endl;
                             if (rec != sf::Socket::Done) {
@@ -604,27 +593,26 @@ int main(int argc, char* argv[]) {
                                 return 1;
                             }
                             packet >> net_status >> my_hp >> enemy_hp >> heal_per_turn >> dmg_per_turn;
+
                             if (net_status == WAIT) {
-                                cout << "orghu4hihnu4bh4u4o5h38kchg45hg4h4o4jhoj5ohj4o" << endl;
                             }
+
                             action_status = NOTHING;
                             break;
                         }
-                        cout << "Message 2" << endl;
+
 
                         if (action_status == PLAY_CARD && buff_card.CoinCard != 0) {
                             coins_per_turn += buff_card.CoinCard;
                             cout << "$$ Получено монет с розыгрыша= " << buff_card.CoinCard
                                 << "$$ Монет на текущий момент = " << coins_per_turn << endl;
                         }
-                        //cout << "Message 14" << endl;
 
                         if (action_status == UTIL_CARD && buff_card.UtRule.ut_CoinCard != 0) {
                             coins_per_turn += buff_card.UtRule.ut_CoinCard;
                             cout << "$$ Получено монет при удалении = " << buff_card.UtRule.ut_CoinCard
                                 << " $$ Монет на текущий момент = " << coins_per_turn << endl;
                         }
-                        //cout << "Message 15" << endl;
 
                         if (action_status == BUY_CARD) { // Если карту купили, то нужно принять от сервера какую нужно выложить в свободный слот маркета
                             cout << "Жду карту от сервера" << endl;
@@ -632,7 +620,7 @@ int main(int argc, char* argv[]) {
 
                             while (rec == sf::Socket::NotReady){
                                 rec = client_socket.receive(packet);
-                                usleep(100000);
+                                usleep(10000);
                             }
 
                             if (rec != sf::Socket::Done) {
@@ -654,21 +642,17 @@ int main(int argc, char* argv[]) {
                         }
                        
 
-                        auto end = scc.now(); 
-                        auto time_span = static_cast<chrono::duration<double>>(end - start);
-                        cout<< "Main loop took: "<< time_span.count()<<" seconds !!!" << endl;
-
                         action_status = NOTHING;
                     }
                     break; //Выход из кейса YOUR_TURN
                 }
 
                 case WAIT: 
-                {   swap(hero_image,enemy_image);
+                {   cout << "hp " << my_hp << " en_hp " << enemy_hp << " +hp " << heal_per_turn <<
+                        " dmg " << dmg_per_turn << endl;
+                    // Todo - Отобразить разницу в хп
                     endTurn = endTurn_end;
                     cout << "wait" << endl;
-                    //window.clear(Color::Blue);
-                    //connect_logic_to_graph(PlayerHand,player_hand);
                     window.clear();
                     window.draw(BackGroundSec);
                     window.draw(heroImage);
@@ -677,8 +661,6 @@ int main(int argc, char* argv[]) {
                     window.draw(playerOneDeck);
                     window.draw(playerOneDiscard);
 
-                    //window.draw(outpost1);
-                    //window.draw(outpost2);
                     draw_rec_vector(BattleCards,window);
                     if (flag_draw == 1 ){
                         window.draw(ShowBIG);
@@ -692,8 +674,6 @@ int main(int argc, char* argv[]) {
                     window.draw(mainDeck);
                     window.draw(endTurnButton);
 
-            //window.draw(enemyOutpost1);
-            //window.draw(enemyOutpost2);
                     draw_rec_vector(EnemyBattleCards,window);
                     window.draw(enemyImage);
                     window.draw(enemyDeck);
@@ -707,6 +687,17 @@ int main(int argc, char* argv[]) {
                     window.draw(text);
                     window.draw(text_my_hp);
                     window.draw(text_enemy_hp);
+
+                    text_dmg_per_turn.setString("-"+to_string(dmg_per_turn));
+                    text_heal_per_turn.setString("+"+to_string(heal_per_turn));
+
+                    coin_count.setString(to_string(coins_per_turn));
+                    if (heal_per_turn != 0) {
+                        window.draw(text_heal_per_turn);
+                    }
+                    if (dmg_per_turn != 0) {
+                        window.draw(text_dmg_per_turn);
+                    }
                     window.draw(coin_count);
                     window.display();
 
@@ -724,16 +715,14 @@ int main(int argc, char* argv[]) {
 
                     packet >> net_status;
                     cout << "Получено: " << ST << net_status << endl;
-
-                    /*if (net_status != YOUR_TURN && net_status != OPPONENT_TURN) {
-                        //cout << "Бред получили";
-                        return 1;
-                    }*/
                     
                     if (net_status == YOUR_TURN) {
                         packet >> my_hp >> enemy_hp >> less_card;
                         action_status = NOTHING;
                         cout << "Смена хода " << endl;
+                        heal_per_turn = 0;
+                        dmg_per_turn = 0;
+                        start = scc.now();
                         break;
                     }
 
@@ -757,14 +746,12 @@ int main(int argc, char* argv[]) {
                             EnemyBattleCards[pos].setTexture(&enemy_battle_cards.deck_vec[pos].texture);
                             enemy_battle_cards.avaliable[pos]=1;
                             cout<<"GOT CARD";
-
                         }
 
                         if (action_status == UTIL_CARD) {
                             save = buff_card.texture;
                             ShowBIG.setTexture(save);
                             flag_draw = 2 ;
-
                         }
 
                         if (action_status == BUY_CARD) { // Новую карту в маркете тоже нужно отрисовать
@@ -773,9 +760,9 @@ int main(int argc, char* argv[]) {
                             connect_logic_to_graph(market, market_cards);
         
                             rec = client_socket.receive(packet);
-                            while (rec==sf::Socket::NotReady){
+                            while (rec == sf::Socket::NotReady) {
                                 rec = client_socket.receive(packet);
-                                usleep(100000);
+                                usleep(10000);
                             }
 
                             if (rec != sf::Socket::Done) {
@@ -813,9 +800,13 @@ int main(int argc, char* argv[]) {
                     window.draw(victory);
                     window.display();
                     while (window.pollEvent(event)){
-                        if (event.type == Event::Closed)
+                        if (event.type == Event::Closed) {
                             window.close();
-                        else{
+                            return 5;
+                        }
+                            
+                        else {
+                            usleep(10000);
                             continue;
                         }
                         
@@ -824,7 +815,7 @@ int main(int argc, char* argv[]) {
                 }
                 case LOSE:
                 {
-                    cout << "Maybe next time..." << endl; 
+                    cout << "Maybe next time..." << endl;
                     Sprite defeat;
                     Texture def;
                     def.loadFromFile("../include/images/defeat_screen.png");
@@ -833,18 +824,21 @@ int main(int argc, char* argv[]) {
                     window.draw(defeat);
                     window.display();
                     while (window.pollEvent(event)){
-                        if (event.type == Event::Closed)
+                        if (event.type == Event::Closed) {
                             window.close();
-                        else{
+                            return 4;
+                        }
+                            
+                        else {
+                            usleep(10000);
                             continue;
                         }
                     }
                    
-
                 }
                 default: cout << "DEFAULT" << endl; break;
                 }
-                cout << net_status << endl;
+                cout << ST << net_status << endl;
             }
 
     return 0;

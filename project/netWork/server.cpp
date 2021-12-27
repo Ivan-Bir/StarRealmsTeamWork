@@ -16,7 +16,6 @@
 #define SER "SERVER: "
 #define MAX_BUFF 1024
 #define DEFAULT_PORT 8080
-#define TURN_TIME 10
 
 using namespace std;
 
@@ -48,8 +47,8 @@ int main(int argc, char* argv[]) {
     cout << "Карт в деке маркета = " << market_deck.getSize() << endl;
     cout << "Создаю карту" << endl;
 
-    int player_1_hp = 20;
-    int player_2_hp = 20;
+    int player_1_hp = 50;
+    int player_2_hp = 50;
 
     int total_dmg = 0;
     int less_card = 0;
@@ -128,36 +127,20 @@ int main(int argc, char* argv[]) {
     int is_played_blue_race;
     cout << "Жду активности от клиентов" << endl;
 
-    chrono::steady_clock sc;
-    std::chrono::_V2::steady_clock::time_point start;
-    std::chrono::_V2::steady_clock::time_point end;
-
     player_1.setBlocking(false);
     player_2.setBlocking(false);
     while (true) {
-        start = sc.now();
         while (player_1_active) {
-            end = sc.now();
-            auto time_span = static_cast<chrono::duration<double>>(end - start);
-            cout<< "Time remain:  "<< TURN_TIME - time_span.count()<< " seconds !!!" << endl;
-            /*if (TURN_TIME - time_span.count() < 0.0) {
-                cout << "Time is over" << endl;
-                player_1_active = false;
-                player_2_active = true;
-                active_status = END_TURN;
-                break;
-            }*/
             active_status = NOTHING;
 
             int rec = player_1.receive(packet);
             if (rec == sf::Socket::NotReady) {
-                //std::this_thread::sleep_for(std::chrono::milliseconds(0.1));
-                usleep(10000);
+                usleep(10000); //0.01 sec
                 continue;
             }
             if (rec != sf::Socket::Done) {
-                cout << " Ne udalosot clienta" << endl;
-                return 1;
+                cout << "---Disconnect client---" << endl;
+                active_status = DISCONNECT;
             }
 
             // Принимаем пакет от активного игрока
@@ -168,6 +151,27 @@ int main(int argc, char* argv[]) {
             } else {
                 cout << "active_status = " << active_status << endl;
             }
+
+            if (active_status == GIVE_UP || active_status == DISCONNECT) {
+                cout << " Give up " << endl;
+
+                packet.clear();
+                packet << WIN;
+                if (player_2.send(packet) != sf::Socket::Done) {
+                    cout << " Ne udalosot clienta" << endl;
+                    return 1;
+                }
+
+                packet.clear();
+                packet << LOSE;
+                if (player_1.send(packet) != sf::Socket::Done) {
+                    cout << " Ne udalosot clienta" << endl;
+                    return 1;
+                }
+                break;
+
+            }
+
             buff_act.action_status = active_status;
             packet >> buff_card_id;
             buff_act.action_from_card = return_card(buff_card_id);
@@ -186,7 +190,7 @@ int main(int argc, char* argv[]) {
             
             if (active_status == BUY_CARD) {
                 
-                //start = sc.now(); 
+ 
                 cout << "##Нужно выложить карту из маркета" << endl;
 
                 if (market_deck.getSize() == 0) {
@@ -204,14 +208,12 @@ int main(int argc, char* argv[]) {
                     return 1;
                 }
                 cout << "##Отправил запрос маркету" << endl;
-                end = sc.now(); 
                 
             }
             if (active_status == PLAY_CARD){//Отправляем карту 2 игроку на прорисовку
                 packet.clear();
-                packet << PLAY_CARD <<  buff_act.action_from_card.getId() << buff_act.position;//научить понимать какую карту выложил 1 игрок
+                packet << PLAY_CARD <<  buff_act.action_from_card.getId() << buff_act.position;
                 cout<<"GOT CARD";
-                //______________________Посмотреть + разобрать
             }
 
             if (active_status == END_TURN) {
@@ -220,17 +222,21 @@ int main(int argc, char* argv[]) {
                 player_2_active = true;
                 break;
             }
-            // auto time_span = static_cast<chrono::duration<double>>(end - start);
-            // cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
-            // cout << "nov zahod" << endl;
-            // active_status = END_TURN;
         }
 
-        // Обработка действий за ход
-        //cout << "Конец хода первого" << endl;
         cout << "Оработка конца ходa" << endl;
         battle_log.push_back(turn_log);
-
+        ///////////////////
+        for (size_t i = 0; i < turn_log.size(); i++) {
+            turn_log[i].print_action();
+            if (turn_log[i].action_status == UTIL_CARD) {
+                cout << "coin " << turn_log[i].action_from_card.UtRule.ut_CoinCard << endl;
+                cout << "dmg " << turn_log[i].action_from_card.UtRule.ut_DamageCard << endl;
+                cout << "+hp " << turn_log[i].action_from_card.UtRule.ut_RestoreHPCard << endl;
+                cout << "less " << turn_log[i].action_from_card.UtRule.ut_TextRule << endl;
+            }
+        }
+        ///////////////////
         is_played_green_race = 0;
         is_played_red_race = 0;
         is_played_yellow_race = 0;
@@ -277,9 +283,7 @@ int main(int argc, char* argv[]) {
                 }
 
             }
-            if (turn_log.at(i).action_status == UTIL) {
-                // Говорим колоде игрока, чтобы карта удалилась 
-                // Todo....
+            if (turn_log.at(i).action_status == UTIL_CARD) {
                 total_dmg += turn_log.at(i).action_from_card.UtRule.ut_DamageCard;
                 less_card += turn_log.at(i).action_from_card.UtRule.ut_TextRule % 10;
                 restore_hp += turn_log.at(i).action_from_card.UtRule.ut_RestoreHPCard;
@@ -293,7 +297,11 @@ int main(int argc, char* argv[]) {
         cout << " ++ Восстановлено первым за ход = " << restore_hp << endl;
         cout << " << На " << less_card  << " карт меньше в раздаче в следующем ходу" << endl;
 
-        
+        if (active_status == GIVE_UP || active_status == DISCONNECT) {
+            cout << "First player has disconnect" << endl;
+            break; 
+        }
+
 
         if (player_2_hp <= 0) {
             packet.clear();
@@ -319,6 +327,7 @@ int main(int argc, char* argv[]) {
         less_card = 0;
         if (player_2.send(packet) != sf::Socket::Done) { 
             cout << " Ne udalosot clienta 2" << endl;
+            cout << "2t24t3";
             return 1;
         }
 
@@ -334,19 +343,7 @@ int main(int argc, char* argv[]) {
         coins_per_turn = 0;
         turn_log.clear();
 
-        start = sc.now();
         while (player_2_active) {
-            end = sc.now();
-            auto time_span = static_cast<chrono::duration<double>>(end - start);
-            cout<< "Time remain:  "<< TURN_TIME - time_span.count()<< " seconds !!!" << endl;
-           /* if (TURN_TIME - time_span.count() < 0.0) {
-                cout << "Time is over" << endl;
-                player_2_active = false;
-                player_1_active = true;
-                active_status = END_TURN;
-                break;
-            }*/
-           //cout << "Готов обработать Action" << endl;
             active_status = NOTHING;
 
             int rec = player_2.receive(packet);
@@ -355,8 +352,8 @@ int main(int argc, char* argv[]) {
                 continue;   
             }
             if (rec != sf::Socket::Done) {
-                cout << " Ne udalosot clienta" << endl;
-                return 1;
+                cout << "---Disconnect client---" << endl;
+                active_status = DISCONNECT;
             }
             
             // Принимаем пакет от активного игрока
@@ -367,6 +364,27 @@ int main(int argc, char* argv[]) {
             } else {
                 cout << "active_status = " << active_status << endl;
             }
+
+             if (active_status == GIVE_UP || active_status == DISCONNECT) {
+                cout << " Give up " << endl;
+
+                packet.clear();
+                packet << WIN;
+                if (player_1.send(packet) != sf::Socket::Done) {
+                    cout << " Ne udalosot clienta" << endl;
+                    return 1;
+                }
+
+                packet.clear();
+                packet << LOSE;
+                if (player_2.send(packet) != sf::Socket::Done) {
+                    cout << " Ne udalosot clienta" << endl;
+                    return 1;
+                }
+                break;
+
+            }
+
             buff_act.action_status = active_status;
             packet >> buff_card_id;
             buff_act.action_from_card = return_card(buff_card_id);
@@ -381,13 +399,8 @@ int main(int argc, char* argv[]) {
                 cout << " Ne udalosot clienta" << endl;
                 return 1;
             }
-            //cout << "Отправлено на отрисовку" << endl;
-            chrono::steady_clock sc;
-            std::chrono::_V2::steady_clock::time_point start;
-            std::chrono::_V2::steady_clock::time_point end;
             if (active_status == BUY_CARD) {
                 
-                start = sc.now(); 
                 cout << "##Нужно выложить карту из маркета" << endl;
 
                 if (market_deck.getSize() == 0) {
@@ -405,7 +418,7 @@ int main(int argc, char* argv[]) {
                     return 1;
                 }
                 cout << "##Отправил запрос маркету" << endl;
-                end = sc.now(); 
+                //end = sc.now(); 
                 
             }
 
@@ -415,16 +428,17 @@ int main(int argc, char* argv[]) {
                 player_1_active = true;
                 break;
             }
-            // auto time_span = static_cast<chrono::duration<double>>(end - start);
-            // cout<<"Buy loop took: "<< time_span.count()<<" seconds !!!" << endl;
-            // cout << "nov zahod" << endl;
-            // active_status = END_TURN;
         }
 
         // Обработка действий за ход
         //cout << "Конец хода первого" << endl;
 
         battle_log.push_back(turn_log);
+
+        for (size_t i = 0; i < turn_log.size(); i++) {
+            turn_log[i].print_action();
+            turn_log[i].action_from_card.GetParameters();
+        }
 
         is_played_green_race = 0;
         is_played_red_race = 0;
@@ -472,9 +486,7 @@ int main(int argc, char* argv[]) {
                 }
 
             }
-            if (turn_log.at(i).action_status == UTIL) {
-                // Говорим колоде игрока, чтобы карта удалилась 
-                // Todo....
+            if (turn_log.at(i).action_status == UTIL_CARD) {
                 total_dmg += turn_log.at(i).action_from_card.UtRule.ut_DamageCard;
                 less_card += turn_log.at(i).action_from_card.UtRule.ut_TextRule % 10;
                 restore_hp += turn_log.at(i).action_from_card.UtRule.ut_RestoreHPCard;
@@ -488,10 +500,10 @@ int main(int argc, char* argv[]) {
         cout << " ++ Восстановлено первым за ход = " << restore_hp << endl;
         cout << " << На " << less_card  << " карт меньше в раздаче в следующем ходу" << endl;
 
-        // total_dmg = 0;
-        // restore_hp = 0;
-        // coins_per_turn = 0;
-        // turn_log.clear();
+        if (active_status == GIVE_UP || active_status == DISCONNECT) {
+            cout << "Second player has disconnect" << endl;
+            break;
+        }
 
         if (player_1_hp <= 0) {
             packet.clear();
@@ -516,6 +528,7 @@ int main(int argc, char* argv[]) {
         less_card = 0;
         if (player_1.send(packet) != sf::Socket::Done) { // Даём разрешение на ход первому игроку
             cout << " Ne udalosot clienta 2" << endl;
+            cout << "0rtlkh059j0" << endl;
             return 1;
         }
 

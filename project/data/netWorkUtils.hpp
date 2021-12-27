@@ -25,7 +25,9 @@ enum PlayerActions {
     BUY_CARD,
     UTIL_CARD,
     GET_CARD,
-    END_TURN
+    END_TURN,
+    GIVE_UP,
+    DISCONNECT
 };
 
 class Actions {
@@ -34,8 +36,11 @@ class Actions {
     int action_status = NOTHING;
     Card action_from_card = {111};
     int position = -1;  // Номер слота где была карта в руке/маркете
+    
+    void print_action();
 };
 
 bool is_invalid_id_card(int number);
+
 
 #endif  // PROJECT_NETWORKUTILS_UTILS_HPP_

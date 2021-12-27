@@ -44,6 +44,11 @@ bool is_invalid_id_card(int number) {
     return true;
 }
 
+void Actions::print_action() {
+    cout << "action_status-" << this->action_status << " Card_id-" << 
+        this->action_from_card.getId() << " pos-" << this->position << endl;
+}
+
 void SendToServer() {
     return;
 }
