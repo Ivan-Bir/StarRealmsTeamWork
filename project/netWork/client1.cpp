@@ -36,7 +36,7 @@ int main(int argc, char* argv[]) {
     sf::Texture empty_texture;
     Texture save;
     empty_texture.loadFromFile("../include/images/0.jpg");
-    settings.antialiasingLevel = 8;
+    settings.antialiasingLevel = 3;
 	RenderWindow window(VideoMode(1600, 900), "Star Realms", sf::Style::Default, settings);
 
 	RectangleShape heroImage(Vector2f(220.f, 308.f));
@@ -146,27 +146,26 @@ int main(int argc, char* argv[]) {
 
     RectangleShape enemyImage(Vector2f(220.f, 308.f));
     RectangleShape enemyDeck(Vector2f(220.f, 90.f));
-    RectangleShape history(Vector2f(220.f, 45.f));
+    //RectangleShape history(Vector2f(220.f, 45.f));
     RectangleShape giveUp(Vector2f(220.f, 45.f));
 
     enemyImage.move(20, 20);
     enemyDeck.move(260, 20);
-    history.move(1120, 20);
+    //history.move(1120, 20);
     giveUp.move(1360, 20);
-
     enemyDeck.setFillColor(Color::Transparent);
 
     ///////ЧИТАТЬ КОД СЛЕДУЕТ НАЧИНАЯ С ЭТОЙ СТРОКИ(ну и почитайте функции пожожда)
 
     sf::Sprite ShowBIG(empty_texture);
     ShowBIG.setScale(0.7,0.7);
-    ShowBIG.move(Vector2f(20.f, 330.f));
+    ShowBIG.move(Vector2f(340.f, 485.f));
 
     Texture cross;
     cross.loadFromFile("../include/images/cross.png");
     sf::Sprite Cross(cross);
     Cross.setScale(0.5,0.5);
-    Cross.move(Vector2f(20.f, 330.f));
+    Cross.move(Vector2f(340.f, 485.f));
 
     sf::Texture background_first;
     sf::Texture background_sec;
@@ -186,7 +185,8 @@ int main(int argc, char* argv[]) {
     IntRect backgr_rect(0, 0, 100000, 10000);
     sf::Sprite BackGroundFirst(background_first);
     sf::Sprite BackGroundSec(background_sec);
-    history.setTexture(&button_history);
+    //history.setTexture(&button_history);
+    //history.setColor(Color::Transparent);
     giveUp.setTexture(&button_giveup);
     sf::Sprite coin(coin_texture);
     coin.move(260,720);
@@ -285,10 +285,10 @@ int main(int argc, char* argv[]) {
             }
             connect_logic_to_graph(market, market_cards);
             //_____________________________________________ Идет отрисовка полученного в начале игры на маркет
-            draw(window,BackGroundFirst,heroImage,heroStats,PlayerHand,playerOneDeck,playerOneDiscard,
+            /*draw(window,BackGroundFirst,heroImage,heroStats,PlayerHand,playerOneDeck,playerOneDiscard,
             BattleCards,ShowBIG,market,mainDeck,endTurnButton,EnemyBattleCards,
             enemyImage,enemyDeck,history,giveUp,Discard_rec,text,
-            text_my_hp,text_enemy_hp,heroImage,heroStats,flag_draw,mainDeck);
+            text_my_hp,text_enemy_hp,heroImage,heroStats,flag_draw,mainDeck);*/
             //________________________________________________________
             rec = client_socket.receive(packet);
             if (rec != sf::Socket::Done) {
@@ -444,7 +444,7 @@ int main(int argc, char* argv[]) {
                             draw_rec_vector(EnemyBattleCards,window);
                             window.draw(enemyImage);
                             window.draw(enemyDeck);
-                            window.draw(history);
+                            //window.draw(history);
                             window.draw(giveUp);
                             window.draw(Discard_rec);
                             if (print_time>42){
@@ -504,7 +504,7 @@ int main(int argc, char* argv[]) {
                         draw_rec_vector(EnemyBattleCards,window);
                         window.draw(enemyImage);
                         window.draw(enemyDeck);
-                        window.draw(history);
+                        //window.draw(history);
                         window.draw(giveUp);
                         window.draw(Discard_rec);
                         if (print_time>42){
@@ -756,7 +756,7 @@ int main(int argc, char* argv[]) {
                     draw_rec_vector(EnemyBattleCards,window);
                     window.draw(enemyImage);
                     window.draw(enemyDeck);
-                    window.draw(history);
+                    //window.draw(history);
                     window.draw(giveUp);
                     window.draw(Discard_rec);
                     text_my_hp.setString("HP:"+to_string(my_hp));
