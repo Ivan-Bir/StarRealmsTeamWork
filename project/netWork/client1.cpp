@@ -173,11 +173,16 @@ int main(int argc, char* argv[]) {
     sf::Texture button_history;
     sf::Texture button_giveup;
     sf::Texture coin_texture;
+    sf::Texture end_turn;
     background_first.loadFromFile("../include/images/background_first.jpg");
     background_sec.loadFromFile("../include/images/background_sec.jpg");
     button_history.loadFromFile("../include/images/History_button.png");
     button_giveup.loadFromFile("../include/images/Give_up_button.png");
     coin_texture.loadFromFile("../include/images/coin.png");
+    end_turn.loadFromFile("../include/images/Turn.png");
+    sf::Sprite turn(end_turn);
+    turn.move(100,0);
+    int flag_draw_turn=1;
     IntRect backgr_rect(0, 0, 100000, 10000);
     sf::Sprite BackGroundFirst(background_first);
     sf::Sprite BackGroundSec(background_sec);
@@ -236,6 +241,11 @@ int main(int argc, char* argv[]) {
     text_heal_per_turn.setColor(Color::Green);
     text_heal_per_turn.setStyle(Text::Bold);
     text_heal_per_turn.setPosition(75, 666);
+
+    Text timer("",font,20);
+    timer.setColor(Color::Black);
+    timer.setStyle(Text::Bold);
+    timer.setPosition(Vector2f(1420.f, 340.f));
 
     DeckCard player_hand(5, 1);
     DeckCard battle_cards(5, 1);
@@ -338,24 +348,30 @@ int main(int argc, char* argv[]) {
             chrono::steady_clock scc;
             std::chrono::_V2::steady_clock::time_point start; 
             std::chrono::_V2::steady_clock::time_point end;
+            float FADE_SPEED =1; 
             start = scc.now();
             while (true) {
                 switch (net_status) {
                 case YOUR_TURN:
                 {   coins_per_turn = 100;
                     cout << "My turn";
+                    timer.setColor(Color::Black);
+                    int fade = 0;
+                    sf::Clock fadeClock;
                     endTurn = endTurn_start;
                     Deck.giveHand(player_hand, d, (5 - less_card), discrad_texture);
                     less_card = 0;
                     connect_logic_to_graph(PlayerHand, player_hand);
 
                     // ###############################################
-                   
+                    turn.setColor(Color(175, 180, 240));
+                    int print_time=45;
                     while(true) { // Todo Таймер на 45 сек
                         action_status = NOTHING;
                         end = scc.now();
                         auto time_span = static_cast<chrono::duration<double>> (end - start);
-                        cout << "time_remain = " << TURN_TIME - time_span.count() << endl;
+                        //cout << "time_remain = " << TURN_TIME - time_span.count() << endl;
+                        timer.setString(to_string(print_time)+"sec");
                         // Тут надо написать вывод времени на экран целых секунд (int) time_span.count();
                         bool time_is_over = false;
                         if (TURN_TIME - time_span.count() < 0.0) {
@@ -381,7 +397,67 @@ int main(int argc, char* argv[]) {
                             time_is_over = true;
 
                         }
-                        while (window.pollEvent(event) && time_is_over != true) {
+                        if (int(TURN_TIME - time_span.count()) != print_time){
+                            print_time=int(TURN_TIME - time_span.count());
+                            if (print_time<=10){
+                                timer.setColor(Color::Red);
+                            }
+                            window.clear(Color::White);
+                            window.draw(BackGroundFirst);
+                            window.draw(heroImage);
+                            window.draw(heroStats);
+                            draw_rec_vector(PlayerHand,window);
+                            window.draw(playerOneDeck);
+                            window.draw(playerOneDiscard);
+
+                            window.draw(coin);
+                            draw_rec_vector(BattleCards,window);
+                            text_my_hp.setString("HP:"+to_string(my_hp));
+                            text_enemy_hp.setString("HP:"+to_string(enemy_hp));
+                            text_dmg_per_turn.setString("-"+to_string(dmg_per_turn));
+                            text_heal_per_turn.setString("-"+to_string(heal_per_turn));
+                            coin_count.setString(to_string(coins_per_turn));
+                            window.draw(text_my_hp);
+                            window.draw(text_enemy_hp);
+                            if (heal_per_turn != 0) {
+                                window.draw(text_heal_per_turn);
+                            }
+                            if (dmg_per_turn != 0) {
+                                window.draw(text_dmg_per_turn);
+                            }
+                            window.draw(coin_count);
+                            
+                            window.draw(text);
+                            if (flag_draw == 1){
+                                window.draw(ShowBIG);
+                            }
+                            if (flag_draw == 2){
+                                window.draw(ShowBIG);
+                                window.draw(Cross);
+                            }
+                            draw_rec_vector(market,window);
+                        
+                            window.draw(mainDeck);
+
+                            window.draw(endTurnButton);
+
+                            draw_rec_vector(EnemyBattleCards,window);
+                            window.draw(enemyImage);
+                            window.draw(enemyDeck);
+                            window.draw(history);
+                            window.draw(giveUp);
+                            window.draw(Discard_rec);
+                            if (print_time>42){
+                                window.draw(turn);
+                            }
+                            timer.setString(to_string(print_time)+"sec");
+                            window.draw(timer);
+                            window.display();
+                        }
+
+
+
+                        while ((window.pollEvent(event)) && time_is_over != true) {
                             if (event.type == Event::MouseMoved){
                                 continue;
                             }
@@ -431,7 +507,10 @@ int main(int argc, char* argv[]) {
                         window.draw(history);
                         window.draw(giveUp);
                         window.draw(Discard_rec);
-
+                        if (print_time>42){
+                            window.draw(turn);
+                        }
+                        window.draw(timer);
                         window.display();
                        
                         if (event.type == Event::Closed) {
